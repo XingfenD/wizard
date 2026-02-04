@@ -13,6 +13,7 @@ use App\Repositories\Catalog;
 use App\Repositories\OperationLogs;
 use App\Repositories\Project;
 use Illuminate\Http\Request;
+use App\Repositories\Document;
 
 class OperationLogController extends Controller
 {
@@ -56,6 +57,17 @@ class OperationLogController extends Controller
             ->offset($offset)
             ->get();
 
+        $pageIds = $operationLogs->pluck('page_id')->filter()->unique()->toArray();
+        $docExternalIds = [];
+        if (!empty($pageIds)) {
+            $documents = Document::select('id', 'external_id')
+                ->whereIn('id', $pageIds)
+                ->get();
+            $docExternalIds = $documents->pluck('external_id', 'id')->toArray();
+        }
+        foreach ($operationLogs as $operation) {
+            $operation->doc_external_id = $docExternalIds[$operation->page_id] ?? '';
+        }
         if ($request->wantsJson()) {
             return $operationLogs->transform(function (OperationLogs $operation) {
                 return [
@@ -68,6 +80,7 @@ class OperationLogController extends Controller
                     'project_name' => $operation->context->project_name ?? '',
                     'project_id'   => $operation->project_id,
                     'doc_id'       => $operation->page_id,
+                    'doc_external_id' => $operation->doc_external_id ?? '',
                     'doc_title'    => $operation->context->doc_title ?? '',
                     'created_at'   => $operation->created_at,
                 ];

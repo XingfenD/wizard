@@ -16,25 +16,25 @@
             </span>
             @if ($log->message == 'document_updated')
                  修改了文档
-                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->context->doc_id]) }}">{{ $log->context->doc_title }}</a></span>
+                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->doc_external_id]) }}">{{ $log->context->doc_title }}</a></span>
                 @if(!Auth::guest())
                     【<a href="#" wz-doc-compare-submit
-                        data-doc1="{{ wzRoute('project:doc:json', ['id' => $log->project_id, 'page_id' => $log->context->doc_id]) }}"
-                        data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $log->context->history_id ?? 0, 'id' => $log->project_id, 'page_id' => $log->context->doc_id]) }}">@lang('common.btn_diff')</a>】
+                        data-doc1="{{ wzRoute('project:doc:json', ['id' => $log->project_id, 'page_id' => $log->doc_external_id]) }}"
+                        data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $log->context->history_id ?? 0, 'id' => $log->project_id, 'page_id' => $log->doc_external_id]) }}">@lang('common.btn_diff')</a>】
                 @endif
             @elseif ($log->message == 'document_created')
                 创建了文档
-                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->context->doc_id]) }}">{{ $log->context->doc_title }}</a></span>
+                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->doc_external_id]) }}">{{ $log->context->doc_title }}</a></span>
             @elseif ($log->message == 'document_deleted')
                 删除了文档
-                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->context->doc_id]) }}">{{ $log->context->doc_title }}</a></span>
+                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->doc_external_id]) }}">{{ $log->context->doc_title }}</a></span>
             @elseif ($log->message == 'document_mark_updated')
                 将文档
-                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->context->doc_id]) }}">{{ $log->context->doc_title }}</a></span>
+                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->doc_external_id]) }}">{{ $log->context->doc_title }}</a></span>
                 标记为 {{ $log->context->status == \App\Repositories\Document::STATUS_NORMAL ? '正常' : '已过时' }}
             @elseif ($log->message == 'document_recovered')
                 还原了文档
-                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->context->doc_id]) }}">{{ $log->context->doc_title }}</a></span>
+                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->doc_external_id]) }}">{{ $log->context->doc_title }}</a></span>
             @elseif ($log->message == 'project_deleted')
                 删除了项目
                 <span class="wz-text-dashed">{{ $log->context->project_name }}</span>
@@ -46,7 +46,7 @@
                 <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id]) }}">{{ $log->context->project_name }}</a> </span>
             @elseif ($log->message == 'comment_created')
                 评论了文档
-                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->context->doc_id]) }}">{{ $log->context->doc_title }}</a></span>
+                <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->doc_external_id]) }}">{{ $log->context->doc_title }}</a></span>
             @endif
         </p>
     </div>
