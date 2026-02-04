@@ -27,5 +27,8 @@ RUN wget https://getcomposer.org/download/2.5.0/composer.phar \
     && ln -s /usr/bin/composer.phar /usr/bin/composer \
     && php /usr/bin/composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
+WORKDIR /webroot/wizard
+COPY ./ /webroot/wizard
+
 COPY ./init.sh /opt/init.sh
 CMD ["bash", "/opt/init.sh"]

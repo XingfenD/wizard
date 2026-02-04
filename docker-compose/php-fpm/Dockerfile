@@ -9,3 +9,6 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) pcntl exif pdo_mysql ldap \
     && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd
+
+WORKDIR /webroot/wizard
+COPY ./ /webroot/wizard
