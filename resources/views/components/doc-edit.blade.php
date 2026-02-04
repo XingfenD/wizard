@@ -1,7 +1,7 @@
 <div class="row wz-editor-header">
     {{ csrf_field() }}
     <input type="hidden" name="project_id" id="editor-project_id" value="{{ $project->id ?? '' }}"/>
-    <input type="hidden" name="page_id" id="editor-page_id" value="{{ $pageItem->id ?? '' }}">
+    <input type="hidden" name="page_external_id" id="editor-page_external_id" value="{{ $pageItem->external_id ?? '' }}">
     <input type="hidden" name="pid" id="editor-pid" value="{{ $pageItem->pid ?? '' }}">
     <input type="hidden" name="last_modified_at" value="{{ $pageItem->updated_at ?? '' }}">
     <input type="hidden" name="history_id" value="{{ $pageItem->history_id ?? '' }}">

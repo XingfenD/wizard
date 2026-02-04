@@ -71,15 +71,15 @@ class DocumentController extends Controller
      * 编辑文档页面
      *
      * @param $id
-     * @param $external_id
+     * @param $page_external_id
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function editPage($id, $external_id)
+    public function editPage($id, $page_external_id)
     {
         /** @var Document $pageItem */
-        $pageItem = Document::where('project_id', $id)->where('external_id', $external_id)->firstOrFail();
+        $pageItem = Document::where('project_id', $id)->where('external_id', $page_external_id)->firstOrFail();
 
         $this->authorize('page-edit', $pageItem);
 
@@ -191,26 +191,26 @@ class DocumentController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      *
      * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function editPageHandle(Request $request, $id, $page_id)
+    public function editPageHandle(Request $request, $id, $page_external_id)
     {
         $this->validate(
             $request,
             [
-                'project_id'       => "required|integer|min:1|in:{$id}|project_exist",
-                'page_id'          => "required|integer|min:1|in:{$page_id}|page_exist:{$id}",
-                'pid'              => "required|integer|min:0|page_exist:{$id},false",
-                'title'            => 'required|between:1,255',
-                'last_modified_at' => 'required|date',
-                'force'            => 'bool',
-                'history_id'       => 'required|integer',
-                'sort_level'       => 'integer',
-                'sync_url'         => 'nullable|url',
+                'project_id'        => "required|integer|min:1|in:{$id}|project_exist",
+                'page_external_id'  => "required|string|in:{$page_external_id}|page_exist_by_external_id:{$id}",
+                'pid'               => "required|integer|min:0|page_exist:{$id},false",
+                'title'             => 'required|between:1,255',
+                'last_modified_at'  => 'required|date',
+                'force'             => 'bool',
+                'history_id'        => 'required|integer',
+                'sort_level'        => 'integer',
+                'sync_url'          => 'nullable|url',
             ],
             [
                 'title.required' => __('document.validation.title_required'),
@@ -230,7 +230,7 @@ class DocumentController extends Controller
         $syncUrl = $request->input('sync_url');
         debugLog('updating title:'.$title);
         /** @var Document $pageItem */
-        $pageItem = Document::where('id', $page_id)->firstOrFail();
+        $pageItem = Document::where('external_id', $page_external_id)->firstOrFail();
 
         // 类型如果是表格，则需要检验表格内容是否合法
         if ($pageItem->isTable()) {
@@ -288,7 +288,7 @@ class DocumentController extends Controller
                 ),
                 'show' => wzRoute(
                     'project:home',
-                    ['id' => $projectID, 'p' => $pageItem->id]
+                    ['id' => $projectID, 'p' => $pageItem->external_id]
                 )
             ]
         ];

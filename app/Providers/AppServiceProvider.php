@@ -36,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->addProjectExistRules('project_exist');
         $this->addPageExistRules('page_exist');
+        $this->addPageExistRulesByExternalId('page_exist_by_external_id');
         $this->addTemplateUniqueRules('template_unique');
         $this->addGroupExistRule('group_exist');
         $this->addCheckUserPasswordRules('user_password');
@@ -83,6 +84,38 @@ class AppServiceProvider extends ServiceProvider
 
                 $conditions = [];
                 $conditions[] = ['id', $value];
+
+                if (!empty($projectID)) {
+                    $conditions[] = ['project_id', $projectID];
+                }
+
+                return Document::where($conditions)->exists();
+            }
+        );
+    }
+
+    /**
+     * 检查页面是否存在
+     *
+     * 参数：项目ID,是否验证0值
+     *
+     * @param string $ruleName
+     */
+    private function addPageExistRulesByExternalId(string $ruleName)
+    {
+        $this->registerValidationRule(
+            $ruleName,
+            '参数 %s 对应的页面不存在',
+            function ($attribute, $value, $parameters, $validator) {
+                $projectID = $parameters[0] ?? 0;
+                $validateZeroValue = isset($parameters[1]) ? ($parameters[1] == 'true') : true;
+
+                if (empty($value)) {
+                    return !$validateZeroValue;
+                }
+
+                $conditions = [];
+                $conditions[] = ['external_id', $value];
 
                 if (!empty($projectID)) {
                     $conditions[] = ['project_id', $projectID];

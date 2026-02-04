@@ -184,8 +184,8 @@ Route::group(['middleware' => 'locale'], function () {
                 Route::post('/{id}/doc-import', 'ImportController@documents')->name('doc:import');
 
                 // 编辑文档
-                Route::get('/{id}/doc/{external_id}', 'DocumentController@editPage')->name('doc:edit:show');
-                Route::post('/{id}/doc/{external_id}', 'DocumentController@editPageHandle')
+                Route::get('/{id}/doc/{page_external_id}', 'DocumentController@editPage')->name('doc:edit:show');
+                Route::post('/{id}/doc/{page_external_id}', 'DocumentController@editPageHandle')
                      ->name('doc:edit:handle');
                 Route::delete('/{id}/doc/{page_id}', 'DocumentController@deletePage')
                      ->name('doc:delete');
