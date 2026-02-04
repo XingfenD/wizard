@@ -1,4 +1,4 @@
-FROM php:7.3-apache
+FROM php:7.4-apache
 
 WORKDIR /webroot
 ENV APACHE_DOCUMENT_ROOT /webroot/public
@@ -26,25 +26,18 @@ RUN apt-get update && apt-get install -y \
         mercurial \
         --no-install-recommends && rm -r /var/lib/apt/lists/* \
     && docker-php-ext-install -j$(nproc) pcntl exif pdo_mysql zip ldap \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd
-RUN wget https://mirrors.aliyun.com/composer/composer.phar \
-    && mv composer.phar /usr/bin/composer.phar \
-    && chmod +x /usr/bin/composer.phar \
-    && ln -s /usr/bin/composer.phar /usr/bin/composer \
-    && php /usr/bin/composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+RUN wget https://getcomposer.org/download/2.5.0/composer.phar     && mv composer.phar /usr/bin/composer.phar     && chmod +x /usr/bin/composer.phar     && ln -s /usr/bin/composer.phar /usr/bin/composer     && php /usr/bin/composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 RUN a2enmod rewrite
 RUN a2enmod headers
 
 COPY ./composer.json /webroot/
-RUN php /usr/bin/composer install --prefer-dist --no-autoloader --no-scripts --no-dev
+RUN php /usr/bin/composer install --prefer-dist --no-autoloader --no-scripts --no-dev --ignore-platform-reqs
 
 COPY ./ /webroot
 
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-RUN cp .env.docker .env \
-    && php /usr/bin/composer dump-autoload --optimize \
-    && chown www-data:www-data -R ./ \
-    && php artisan storage:link
+RUN cp .env.docker .env     && php /usr/bin/composer dump-autoload --optimize --ignore-platform-reqs     && chown www-data:www-data -R ./     && php artisan storage:link
