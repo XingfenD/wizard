@@ -21,7 +21,7 @@
             <ul class="nav nav-pills pull-right">
                 <li role="presentation" class="mr-2">
                     <button type="button"
-                            data-href="{{ wzRoute('project:home', ['id' => $project->id] + (empty($pageItem) ? [] : ['p' => $pageItem->id])) }}"
+                            data-href="{{ wzRoute('project:home', ['id' => $project->id] + (empty($pageItem) ? [] : ['p' => $pageItem->external_id])) }}"
                             class="btn btn-default bmd-btn-icon" id="wz-document-goback">
                         <i class="material-icons">clear</i>
                     </button>
