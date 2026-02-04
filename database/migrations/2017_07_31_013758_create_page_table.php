@@ -16,6 +16,7 @@ class CreatePageTable extends Migration
         Schema::create('wz_pages', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('pid', false, true)->nullable()->comment('上级页面ID');
+            $table->string('external_id')->nullable()->comment('外部ID');
             $table->string('title')->comment('页面标题');
             $table->text('description')->nullable()->comment('页面描述');
             $table->longText('content')->nullable()->comment('页面内容');

@@ -162,8 +162,8 @@ class ProjectController extends Controller
      */
     public function project(Request $request, $id)
     {
-        $pageID = (int)$request->input('p', 0);
-
+        $pageID = 0;
+        $pageExternalID = (string)$request->input('p', '0');
         /** @var Project $project */
         $project = Project::with('catalog')->findOrFail($id);
 
@@ -173,7 +173,7 @@ class ProjectController extends Controller
         }
 
         $page = $type = null;
-        if ($pageID !== 0) {
+        if ($pageExternalID !== '0') {
             $queryBuilder = Document::query();
 
             if (config('wizard.reply_support')) {
@@ -185,8 +185,9 @@ class ProjectController extends Controller
             }
 
             $page = $queryBuilder->where('project_id', $id)
-                                 ->where('id', $pageID)
+                                 ->where('external_id', $pageExternalID)
                                  ->firstOrFail();
+            $pageID = $page->id;
             $type = $this->types[$page->type];
 
             $history = DocumentHistory::where('page_id', $page->id)
@@ -228,6 +229,7 @@ class ProjectController extends Controller
         return view('project.project', [
             'project'            => $project,
             'pageID'             => $pageID,
+            'pageExternalID'     => $pageExternalID,
             'pageItem'           => $page,
             'keyword'            => trim(urldecode($request->input('keyword', ''))),
             'scores'             => $scores ?? [],
@@ -237,7 +239,7 @@ class ProjectController extends Controller
             'code'               => '',
             'operationLogs'      => $operationLogs ?? [],
             'comment_highlight'  => $request->input('cm', ''),
-            'navigators'         => navigator($id, $pageID),
+            'navigators'         => navigator($id, $pageExternalID),
             'history'            => $history ?? false,
             'share'              => $share ?? false,
             'isFavorited'        => $project->isFavoriteByUser(\Auth::user()),

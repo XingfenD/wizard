@@ -34,7 +34,7 @@ RUN a2enmod rewrite
 RUN a2enmod headers
 
 COPY ./composer.json /webroot/
-RUN php /usr/bin/composer install --prefer-dist --no-autoloader --no-scripts --no-dev --ignore-platform-reqs
+RUN php /usr/bin/composer install --prefer-dist --no-autoloader --no-scripts --ignore-platform-reqs
 
 COPY ./ /webroot
 

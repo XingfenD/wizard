@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Barryvdh\Debugbar\Facade as Debugbar;
 
 /**
  * 生成路由url
@@ -58,20 +59,19 @@ function documentType($type): string
  * 必须保证pages是按照pid进行asc排序的，否则可能会出现菜单丢失
  *
  * @param int $projectID 当前项目ID
- * @param int $pageID 选中的文档ID
+ * @param int $pageExternalID 选中的文档ID
  * @param array $exclude 排除的文档ID列表
  *
  * @return array
  */
 function navigator(
     int $projectID,
-    int $pageID = 0,
-        $exclude = []
-)
-{
+    string $pageExternalID = '0',
+    $exclude = []
+) {
     static $cached = [];
 
-    $key = "{$projectID}:{$pageID}:" . implode(':', $exclude);
+    $key = "{$projectID}:{$pageExternalID}:" . implode(':', $exclude);
     if (isset($cached[$key])) {
         return $cached[$key];
     }
@@ -84,22 +84,23 @@ function navigator(
         'type',
         'status',
         'created_at',
-        'sort_level'
+        'sort_level',
+        "external_id"
     )->orderBy('pid')->get();
 
     $navigators = [];
     /** @var Document $page */
     foreach ($pages as $page) {
-        if (in_array((int)$page->id, $exclude)) {
+        if (in_array((int) $page->id, $exclude)) {
             continue;
         }
 
         $navigators[$page->id] = [
-            'id' => (int)$page->id,
+            'id' => (int) $page->id,
             'name' => $page->title,
-            'pid' => (int)$page->pid,
-            'url' => wzRoute('project:home', ['id' => $projectID, 'p' => $page->id]),
-            'selected' => $pageID === (int)$page->id,
+            'pid' => (int) $page->pid,
+            'url' => wzRoute('project:home', ['id' => $projectID, 'p' => $page->external_id]),
+            'selected' => $pageExternalID === (string) $page->external_id,
             'type' => documentType($page->type),
             'status' => $page->status,
             'created_at' => $page->created_at,
@@ -438,10 +439,10 @@ function ui_usernames(Collection $users, $actived = true)
             return $actived ? $user->isActivated() : true;
         }
     )->map(
-        function (User $user) {
-            return "'{$user->name}'";
-        }
-    )->implode(',');
+            function (User $user) {
+                return "'{$user->name}'";
+            }
+        )->implode(',');
 }
 
 /**
@@ -517,7 +518,7 @@ function ldap_enabled(): bool
 {
     static $enabled = null;
     if (is_null($enabled)) {
-        $enabled = (bool)config('wizard.ldap.enabled');
+        $enabled = (bool) config('wizard.ldap.enabled');
     }
 
     return $enabled;
@@ -532,7 +533,7 @@ function register_enabled(): bool
 {
     static $enabled = null;
     if (is_null($enabled)) {
-        $enabled = (bool)config('wizard.register_enabled');
+        $enabled = (bool) config('wizard.register_enabled');
     }
 
     return $enabled;
@@ -627,10 +628,10 @@ function convertSqlToHTMLTable(string $sql)
 <table class="table table-hover">
     <thead>
         <tr>
-           <th>字段</th> 
-           <th>类型</th> 
-           <th>空</th> 
-           <th>说明</th> 
+           <th>字段</th>
+           <th>类型</th>
+           <th>空</th>
+           <th>说明</th>
         </tr>
     </thead>
     <tbody>{$html}</tbody>
@@ -660,7 +661,7 @@ function convertSqlTo(string $sql, $callback)
             return null;
         }
 
-//        \Log::error('xxx', ['struct' => $parsed]);
+        //        \Log::error('xxx', ['struct' => $parsed]);
         if ($parsed['CREATE']['expr_type'] === 'table') {
             $fields = $parsed['TABLE']['create-def']['sub_tree'];
             $tableName = $parsed['TABLE']['base_expr'];
@@ -689,7 +690,7 @@ function convertSqlTo(string $sql, $callback)
                 $comment = trim($field['sub_tree'][1]['comment'] ?? '', "'");
                 $nullable = $field['sub_tree'][1]['nullable'] ?? false;
 
-//        $autoInc      = $field['sub_tree'][1]['auto_inc'] ?? false;
+                //        $autoInc      = $field['sub_tree'][1]['auto_inc'] ?? false;
 //        $primary      = $field['sub_tree'][1]['primary'] ?? false;
 //        $defaultValue = $field['sub_tree'][1]['default'] ?? '-';
 
@@ -832,7 +833,7 @@ function processSpreedSheetSingle($contentArray, $minRow, $minCol)
         ->filter(function ($item) {
             return is_numeric($item);
         })->map(function ($item) {
-            return (int)$item;
+            return (int) $item;
         })->max();
 
     $contentArray['cols']['len'] = ($maxColNum > $minCol ? $maxColNum : $minCol) + 1;
@@ -916,12 +917,11 @@ function markdownCompatibilityStrict($pageItem = null)
  * @param bool $callbackWithFullNavItem 是否在回调函数中传递完整的nav对象
  */
 function traverseNavigators(
-    array    $navigators,
+    array $navigators,
     \Closure $callback,
-    array    $parents = [],
-             $callbackWithFullNavItem = false
-)
-{
+    array $parents = [],
+    $callbackWithFullNavItem = false
+) {
     foreach ($navigators as $nav) {
         $callback($callbackWithFullNavItem ? $nav : $nav['id'], $parents);
 
@@ -1043,4 +1043,122 @@ function highlight(string $content, string $keyword = null): string
     // }
 
     return $content;
+}
+
+/**
+ * 雪花算法生成唯一ID
+ *
+ * @param int $type 类型字段，用于标识不同类型的ID
+ * @param int $machineId 机器ID，默认为1
+ * @return int
+ */
+function snowflake(int $type = 0, int $machineId = 1): int
+{
+    static $lastTimestamp = 0;
+    static $sequence = 0;
+
+    // 起始时间戳（2023-01-01 00:00:00）
+    $epoch = 1672531200000;
+
+    // 各部分位数
+    $timestampBits = 41;
+    $machineIdBits = 10;
+    $typeBits = 5;
+    $sequenceBits = 8;
+
+    // 最大值
+    $maxMachineId = (1 << $machineIdBits) - 1;
+    $maxType = (1 << $typeBits) - 1;
+    $maxSequence = (1 << $sequenceBits) - 1;
+
+    // 校验参数
+    if ($machineId < 0 || $machineId > $maxMachineId) {
+        throw new \App\Exceptions\InvalidArgumentException("Machine ID must be between 0 and {$maxMachineId}");
+    }
+    if ($type < 0 || $type > $maxType) {
+        throw new \App\Exceptions\InvalidArgumentException("Type must be between 0 and {$maxType}");
+    }
+
+    // 获取当前时间戳（毫秒）
+    $timestamp = (int) (microtime(true) * 1000);
+
+    // 如果时间戳回退，抛出异常
+    if ($timestamp < $lastTimestamp) {
+        throw new RuntimeException("Clock moved backwards. Refusing to generate id");
+    }
+
+    // 如果是同一毫秒，递增序列号
+    if ($timestamp === $lastTimestamp) {
+        $sequence = ($sequence + 1) & $maxSequence;
+        // 如果序列号溢出，等待下一毫秒
+        if ($sequence === 0) {
+            while ($timestamp <= $lastTimestamp) {
+                $timestamp = (int) (microtime(true) * 1000);
+            }
+        }
+    } else {
+        // 不同毫秒，重置序列号
+        $sequence = 0;
+    }
+
+    // 更新最后时间戳
+    $lastTimestamp = $timestamp;
+
+    // 组合ID
+    $id = (($timestamp - $epoch) << ($machineIdBits + $typeBits + $sequenceBits))
+        | ($machineId << ($typeBits + $sequenceBits))
+        | ($type << $sequenceBits)
+        | $sequence;
+
+    return $id;
+}
+
+/**
+ * 解析雪花算法生成的ID
+ *
+ * @param int $id 雪花ID
+ * @return array
+ */
+function parseSnowflake(int $id): array
+{
+    // 起始时间戳（2023-01-01 00:00:00）
+    $epoch = 1672531200000;
+
+    // 各部分位数
+    $timestampBits = 41;
+    $machineIdBits = 10;
+    $typeBits = 5;
+    $sequenceBits = 8;
+
+    // 位移量
+    $machineIdShift = $typeBits + $sequenceBits;
+    $typeShift = $sequenceBits;
+    $timestampShift = $machineIdBits + $typeBits + $sequenceBits;
+
+    // 最大值
+    $maxMachineId = (1 << $machineIdBits) - 1;
+    $maxType = (1 << $typeBits) - 1;
+    $maxSequence = (1 << $sequenceBits) - 1;
+
+    // 解析各部分
+    $timestamp = ($id >> $timestampShift) + $epoch;
+    $machineId = ($id >> $machineIdShift) & $maxMachineId;
+    $type = ($id >> $typeShift) & $maxType;
+    $sequence = $id & $maxSequence;
+
+    return [
+        'id' => $id,
+        'timestamp' => $timestamp,
+        'machine_id' => $machineId,
+        'type' => $type,
+        'sequence' => $sequence,
+        'datetime' => date('Y-m-d H:i:s', $timestamp / 1000)
+    ];
+}
+
+function debugLog(string $message)
+{
+    if (class_exists('\Barryvdh\Debugbar\Facades\Debugbar')) {
+        Debugbar::debug($message);
+    }
 }

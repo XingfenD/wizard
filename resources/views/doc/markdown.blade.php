@@ -5,7 +5,7 @@
 
     <div class="row marketing wz-main-container-full">
         <form class="w-100" method="POST" id="wz-doc-edit-form"
-              action="{{ $newPage ? wzRoute('project:doc:new:show', ['id' => $project->id]) : wzRoute('project:doc:edit:show', ['id' => $project->id, 'page_id' => $pageItem->id]) }}">
+              action="{{ $newPage ? wzRoute('project:doc:new:show', ['id' => $project->id]) : wzRoute('project:doc:edit:show', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}">
 
             @include('components.doc-edit', ['project' => $project, 'pageItem' => $pageItem ?? null, 'navigator' => $navigator])
             <div class="row">

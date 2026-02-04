@@ -95,6 +95,7 @@ class Document extends Repository
             'sort_level',
             'sync_url',
             'last_sync_at',
+            'external_id'
         ];
 
     public $dates = ['deleted_at'];

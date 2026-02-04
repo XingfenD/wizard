@@ -1,6 +1,6 @@
 @extends('layouts.project')
 @section('page-content')
-    @if($pageID !== 0)
+    @if($pageExternalID !== '0')
         <div class="wz-panel-breadcrumb">
             <ol class="breadcrumb pull-left">
                 <li class="breadcrumb-item"><a href="{{ wzRoute('home') }}">首页</a></li>
@@ -13,12 +13,12 @@
             <ul class="nav nav-pills pull-right wz-hide-small-screen">
                 @can('page-edit', $pageItem)
                     <li role="presentation" class="mr-2">
-                        <button type="button" data-href="{{ wzRoute('project:doc:edit:show', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" data-toggle="tooltip" title="@lang('common.btn_edit')" class="btn btn-primary bmd-btn-icon">
+                        <button type="button" data-href="{{ wzRoute('project:doc:edit:show', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}" data-toggle="tooltip" title="@lang('common.btn_edit')" class="btn btn-primary bmd-btn-icon">
                             <i class="material-icons">mode_edit</i>
                         </button>
                     </li>
                     <li role="presentation" class="mr-2">
-                        <button type="button" data-href="{{ wzRoute('project:doc:attachment', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" data-toggle="tooltip" title="附件" class="btn btn-primary bmd-btn-icon">
+                        <button type="button" data-href="{{ wzRoute('project:doc:attachment', ['id' => $project->id, 'page_id' => $pageItem->external_id]) }}" data-toggle="tooltip" title="附件" class="btn btn-primary bmd-btn-icon">
                             <span class="fa fa-paperclip"></span>
                         </button>
                     </li>
@@ -216,7 +216,7 @@
 
 @push('page-panel')
 
-    @if(config('wizard.reply_support') && $pageID != 0 && !(Auth::guest() && count($pageItem->comments) === 0))
+    @if(config('wizard.reply_support') && $pageExternalID != '0' && !(Auth::guest() && count($pageItem->comments) === 0))
         <div class="wz-project-main">@include('components.comment')</div>
     @endif
 
@@ -252,7 +252,7 @@
             }
         });
 
-        @if($pageID !== 0 && !Auth::guest())
+        @if($pageExternalID !== '0' && !Auth::guest())
         // 文档评分
         $('.wz-score-box .wz-score-opt button').on('click', function (e) {
             e.preventDefault();
@@ -267,7 +267,7 @@
         });
         @endif
 
-        @if($pageID !== 0 && $share)
+        @if($pageExternalID !== '0' && $share)
         $('.wz-share-cancel').on('click', function (e) {
             e.preventDefault();
             $.wz.confirm('确定取消分享？', function () {

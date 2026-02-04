@@ -71,15 +71,15 @@ class DocumentController extends Controller
      * 编辑文档页面
      *
      * @param $id
-     * @param $page_id
+     * @param $external_id
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function editPage($id, $page_id)
+    public function editPage($id, $external_id)
     {
         /** @var Document $pageItem */
-        $pageItem = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $pageItem = Document::where('project_id', $id)->where('external_id', $external_id)->firstOrFail();
 
         $this->authorize('page-edit', $pageItem);
 
@@ -146,15 +146,21 @@ class DocumentController extends Controller
             $content = $this->processTableRequest($content);
         }
 
+        $typeInt = array_flip($this->types)[$type];
+
+        debugLog('typeInt:'.$typeInt);
+        debugLog('external_id:'.md5((string)snowflake($typeInt)));
+
         $pageItem = Document::create([
             'pid'               => $pid,
             'title'             => $title,
             'description'       => '',
             'content'           => $content,
             'project_id'        => $projectID,
+            'external_id'       => md5((string)snowflake($typeInt)),
             'user_id'           => \Auth::user()->id,
             'last_modified_uid' => \Auth::user()->id,
-            'type'              => array_flip($this->types)[$type],
+            'type'              => $typeInt,
             'status'            => Document::STATUS_NORMAL,
             'sort_level'        => $sortLevel,
             'sync_url'          => $syncUrl,
@@ -169,7 +175,7 @@ class DocumentController extends Controller
             'redirect' => [
                 'edit' => wzRoute(
                     'project:doc:edit:show',
-                    ['id' => $projectID, 'page_id' => $pageItem->id]
+                    ['id' => $projectID, 'page_external_id' => $pageItem->external_id]
                 ),
                 'show' => wzRoute(
                     'project:home',
@@ -222,7 +228,7 @@ class DocumentController extends Controller
         $forceSave = $request->input('force', false);
         $sortLevel = $request->input('sort_level', 1000);
         $syncUrl = $request->input('sync_url');
-
+        debugLog('updating title:'.$title);
         /** @var Document $pageItem */
         $pageItem = Document::where('id', $page_id)->firstOrFail();
 
@@ -278,7 +284,7 @@ class DocumentController extends Controller
             'redirect' => [
                 'edit' => wzRoute(
                     'project:doc:edit:show',
-                    ['id' => $projectID, 'page_id' => $pageItem->id]
+                    ['id' => $projectID, 'page_external_id' => $pageItem->external_id]
                 ),
                 'show' => wzRoute(
                     'project:home',
