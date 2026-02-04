@@ -5,10 +5,28 @@ RUN apt-get update && apt-get install -y \
         libmcrypt-dev \
         libpng-dev \
         libldap-dev \
+        libzip-dev \
+        wget \
+        curl \
+        git \
+        subversion \
+        zip \
+        unzip \
+        mercurial \
         --no-install-recommends && rm -r /var/lib/apt/lists/* \
-    && docker-php-ext-install -j$(nproc) pcntl exif pdo_mysql ldap \
+    && docker-php-ext-install -j$(nproc) pcntl exif pdo_mysql zip ldap \
     && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd
+RUN wget https://getcomposer.org/download/2.5.0/composer.phar \
+    && mv composer.phar /usr/bin/composer.phar \
+    && chmod +x /usr/bin/composer.phar \
+    && ln -s /usr/bin/composer.phar /usr/bin/composer \
+    && php /usr/bin/composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 WORKDIR /webroot/wizard
 COPY ./ /webroot/wizard
+
+RUN php /usr/bin/composer install --prefer-dist --ignore-platform-reqs --no-scripts \
+    && cp /webroot/wizard/docker-compose/.env.docker /webroot/wizard/.env \
+    && php /usr/bin/composer dump-autoload --optimize --ignore-platform-reqs \
+    && chown www-data:www-data -R /webroot/wizard/

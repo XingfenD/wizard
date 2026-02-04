@@ -21,8 +21,8 @@ services:
       - backend
   php-fpm:
       build:
-        context: ./docker-compose/php-fpm
-        dockerfile: Dockerfile
+        context: .
+        dockerfile: docker-compose/php-fpm/Dockerfile
       volumes:
         - app_volume:/data/
       ports:
@@ -44,8 +44,8 @@ services:
       - php-fpm
   php:
     build:
-      context: ./docker-compose/php
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker-compose/php/Dockerfile
     volumes:
       - app_volume:/data/
     networks:

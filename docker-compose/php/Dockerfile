@@ -30,5 +30,5 @@ RUN wget https://getcomposer.org/download/2.5.0/composer.phar \
 WORKDIR /webroot/wizard
 COPY ./ /webroot/wizard
 
-COPY ./init.sh /opt/init.sh
+COPY ./docker-compose/php/init.sh /opt/init.sh
 CMD ["bash", "/opt/init.sh"]

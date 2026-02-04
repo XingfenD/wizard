@@ -17,7 +17,6 @@ _ide_*.php
 .git/
 .DS_Store
 .phpstorm.meta.php
-docker-compose/
 storage/api-docs/*
 storage/app/public/*
 storage/debugbar/*
