@@ -2,8 +2,19 @@
 /**
  * Wizard
  *
- * @link      https://aicode.cc/
- * @copyright 管宜尧 <mylxsw@aicode.cc>
+ * Original Code Copyright
+ * @license     Apache2.0
+ * @link        https://aicode.cc/
+ * @copyright   管宜尧 <mylxsw@aicode.cc>
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. Use page external id instead of page id
+ *      a. for notification of document updated
  */
 
 namespace App\Notifications;
@@ -80,7 +91,7 @@ class DocumentUpdated extends Notification
                 $this->document->lastModifiedUser->name,
                 wzRoute('project:home', [
                     'id' => $this->document->project_id,
-                    'p'  => $this->document->id
+                    'p'  => $this->document->external_id
                 ]),
                 $this->document->title
             )

@@ -458,7 +458,7 @@ class DocumentController extends Controller
      */
     public function getSwagger($id, $page_id)
     {
-        $yaml = $this->getSwaggerContent($id, $page_id);
+        $yaml = $this->getSwaggerContent($id, $page_id, null);
         if (isJson($yaml)) {
             $formatter = Formatter::make($yaml, Formatter::JSON);
             return response($formatter->toYaml());

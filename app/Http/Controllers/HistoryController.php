@@ -125,7 +125,7 @@ class HistoryController extends Controller
      * 以JSON返回历史文档
      *
      * @param Request $request
-     * @param         $id
+     * @param         $id               - project_id
      * @param         $page_external_id
      * @param         $history_id
      *
@@ -134,14 +134,13 @@ class HistoryController extends Controller
     public function getPageJSON(Request $request, $id, $page_external_id, $history_id)
     {
         if ($history_id == 0) {
-            $document = Document::where('external_id', $page_external_id)->firstOrFail();
+            $document = Document::findByExternalID($id, $page_external_id, ['id', 'history_id']);
             $history  = DocumentHistory::where('page_id', $document->id)
                 ->where('id', '!=', $document->history_id)
                 ->orderBy('id', 'desc')
                 ->firstOrFail();
         } else {
-            $document = Document::where('external_id', $page_external_id)->firstOrFail();
-            $page_id = $document->id;
+            $page_id = Document::idFromExternalID($page_external_id);
             $history = DocumentHistory::where('page_id', $page_id)->where('id', $history_id)
                 ->firstOrFail();
         }

@@ -2,7 +2,7 @@
     <div class="card-body">
         @can('project-comment', $project)
             <form method="post"
-                  action="{{ wzRoute('project:doc:comment', ['id' => $project->id, 'page_id' => $pageItem->id]) }}"
+                  action="{{ wzRoute('project:doc:comment', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}"
                   id="wz-new-comment-form" style="position: relative;">
                 {{ csrf_field() }}
                 <div class="alert alert-info wz-comment-tip">

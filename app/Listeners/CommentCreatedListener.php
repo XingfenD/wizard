@@ -2,8 +2,18 @@
 /**
  * Wizard
  *
- * @link      https://aicode.cc/
- * @copyright 管宜尧 <mylxsw@aicode.cc>
+ * Original Code Copyright
+ * @license     Apache2.0
+ * @link        https://aicode.cc/
+ * @copyright   管宜尧 <mylxsw@aicode.cc>
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. Add doc_external_id to OperationLogs.context
  */
 
 namespace App\Listeners;
@@ -35,12 +45,13 @@ class CommentCreatedListener
             \Auth::user()->id,
             'comment_created',
             [
-                'username'     => $comment->user->name,
-                'user_id'      => $comment->user_id,
-                'project_name' => $comment->document->project->name,
-                'project_id'   => $comment->document->project->id,
-                'doc_title'    => $comment->document->title,
-                'doc_id'       => $comment->document->id,
+                'username'          => $comment->user->name,
+                'user_id'           => $comment->user_id,
+                'project_name'      => $comment->document->project->name,
+                'project_id'        => $comment->document->project->id,
+                'doc_title'         => $comment->document->title,
+                'doc_id'            => $comment->document->id,
+                'doc_external_id'   => $comment->document->external_id,
             ],
             impersonateUser()
         );

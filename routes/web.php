@@ -2,8 +2,19 @@
 /**
  * Wizard
  *
- * @link      https://aicode.cc/
- * @copyright 管宜尧 <mylxsw@aicode.cc>
+ * Original Code Copyright
+ * @license     Apache2.0
+ * @link        https://aicode.cc/
+ * @copyright   管宜尧 <mylxsw@aicode.cc>
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. Use page external id instead of page id
+ *     for every single route with arg 'page_id'
  */
 
 /*
@@ -202,7 +213,7 @@ Route::group(['middleware' => 'locale'], function () {
                 Route::delete('/{id}/doc/{page_external_id}/share', 'ShareController@delete')->name('doc:share:delete');
 
                 // 文档评论
-                Route::post('/{id}/doc/{page_id}/comments', 'CommentController@publish')
+                Route::post('/{id}/doc/{page_external_id}/comments', 'CommentController@publish')
                      ->name('doc:comment');
 
                 // 文档附件

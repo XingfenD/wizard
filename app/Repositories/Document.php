@@ -14,6 +14,8 @@
  *
  * Modifications:
  *  1. New fillable field `external_id` to store document external id
+ *  2. Add method `idFromExternalID` and `externalIdFromID` to query id from external_id and vice versa
+ *  3. Add method `findByExternalID` to find document by external_id
  */
 
 namespace App\Repositories;
@@ -40,6 +42,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon                                                                       $last_sync_at
  * @property Carbon                                                                       $created_at
  * @property Carbon                                                                       $updated_at
+ * @property string                                                                       $external_id
  * @package App\Repositories
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Attachment[] $attachments
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Repositories\Comment[]    $comments
@@ -244,6 +247,60 @@ class Document extends Repository
     public function isTable()
     {
         return (int)$this->type === self::TYPE_TABLE;
+    }
+
+    /**
+     * 通过 external_id 获取文档 ID
+     *
+     * @param string $externalId     外部 ID
+     * @param bool   $failOnNotFound 未找到时是否抛出异常
+     *
+     * @return int|null
+     */
+    public static function idFromExternalID($externalId, $failOnNotFound = true)
+    {
+        $query = self::select('id')->where('external_id', $externalId);
+
+        if ($failOnNotFound) {
+            return $query->firstOrFail()->id;
+        }
+
+        $document = $query->first();
+        return $document ? $document->id : null;
+    }
+
+    /**
+     * 通过 ID 获取 external_id
+     *
+     * @param int    $id             文档 ID
+     * @param bool   $failOnNotFound 未找到时是否抛出异常
+     *
+     * @return string|null
+     */
+    public static function externalIdFromID($id, $failOnNotFound = true)
+    {
+        $query = self::select('external_id')->where('id', $id);
+
+        if ($failOnNotFound) {
+            return $query->firstOrFail()->external_id;
+        }
+
+        $document = $query->first();
+        return $document ? $document->external_id : null;
+    }
+
+    /**
+     * 通过 external_id 获取文档实例
+     *
+     * @param int    $projectId      项目 ID
+     * @param string $externalId     外部 ID
+     * @param array  $columns        要查询的字段
+     *
+     * @return Document
+     */
+    public static function findByExternalID($projectId, $externalId, $columns = ['*'])
+    {
+        return self::where('project_id', $projectId)->where('external_id', $externalId)->firstOrFail($columns);
     }
 
 }

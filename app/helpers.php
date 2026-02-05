@@ -96,7 +96,7 @@ function navigator(
         'status',
         'created_at',
         'sort_level',
-        "external_id"
+        'external_id'
     )->orderBy('pid')->get();
 
     $navigators = [];
