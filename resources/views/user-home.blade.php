@@ -99,7 +99,7 @@
                 return;
             }
 
-            // getRecentlyLogs(offset);
+            getRecentlyLogs(offset);
         });
     });
 </script>

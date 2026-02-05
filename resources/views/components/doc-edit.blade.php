@@ -302,7 +302,7 @@
                 });
             });
 
-            // 自动检查文档是否过期
+            // TODO: 自动检查文档是否过期
             // (function () {
             //     var lastModifiedAt = $('input[name=last_modified_at]').val();
             //     var checkExpiredURL = '{{ wzRoute('project:doc:expired', ['id' => $project->id, 'page_id' => $pageItem->id]) }}';

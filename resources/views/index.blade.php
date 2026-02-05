@@ -155,26 +155,26 @@
             $(function () {
                 moment.locale('zh-cn');
 
-                // var getRecentlyLogs = function (offset) {
-                //     $('.wz-load-more').html('加载中...');
-                //     $.wz.request('get', '{{ wzRoute('operation-log:recently', ['catalog' => $catalog_id,]) }}', {offset: offset}, function (data) {
-                //         $('#operation-log-recently').append(data);
+                var getRecentlyLogs = function (offset) {
+                    $('.wz-load-more').html('加载中...');
+                    $.wz.request('get', '{{ wzRoute('operation-log:recently', ['catalog' => $catalog_id,]) }}', {offset: offset}, function (data) {
+                        $('#operation-log-recently').append(data);
 
-                //         $('#operation-log-recently .wz-operation-log-time').map(function () {
-                //             $(this).html(moment($(this).prop('title'), 'YYYY-MM-DD hh:mm:ss').fromNow());
-                //         });
+                        $('#operation-log-recently .wz-operation-log-time').map(function () {
+                            $(this).html(moment($(this).prop('title'), 'YYYY-MM-DD hh:mm:ss').fromNow());
+                        });
 
-                //         if (data.trim() === "") {
-                //             $('.wz-load-more').parent().html('没有更多了...');
-                //         } else {
-                //             $('.wz-load-more').html('加载更多');
-                //         }
+                        if (data.trim() === "") {
+                            $('.wz-load-more').parent().html('没有更多了...');
+                        } else {
+                            $('.wz-load-more').html('加载更多');
+                        }
 
-                //     }, null, 'html');
-                // };
+                    }, null, 'html');
+                };
 
                 // 初次加载最近操作日志
-                // getRecentlyLogs(0);
+                getRecentlyLogs(0);
 
                 $('.wz-load-more').click(function (e) {
                     e.preventDefault();
@@ -184,7 +184,7 @@
                         return;
                     }
 
-                    // getRecentlyLogs(offset);
+                    getRecentlyLogs(offset);
                 });
 
             });
