@@ -20,7 +20,7 @@
                     移动
                 </a>
                 <a href="#" wz-share
-                   data-url="{{ wzRoute('project:doc:share', ['id' => $project->id, 'page_id' => $pageItem->id]) }}"
+                   data-url="{{ wzRoute('project:doc:share', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}"
                    class="dropdown-item">
                     <span class="fa fa-share-alt mr-2"></span>
                     @lang('common.btn_share')

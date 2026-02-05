@@ -198,8 +198,8 @@ Route::group(['middleware' => 'locale'], function () {
                 Route::put('/{id}/doc/{page_external_id}/mark-status', 'DocumentController@markStatus')->name('doc:mark-status');
 
                 // 文档分享
-                Route::post('/{id}/doc/{page_id}/share', 'ShareController@create')->name('doc:share');
-                Route::delete('/{id}/doc/{page_id}/share', 'ShareController@delete')->name('doc:share:delete');
+                Route::post('/{id}/doc/{page_external_id}/share', 'ShareController@create')->name('doc:share');
+                Route::delete('/{id}/doc/{page_external_id}/share', 'ShareController@delete')->name('doc:share:delete');
 
                 // 文档评论
                 Route::post('/{id}/doc/{page_id}/comments', 'CommentController@publish')

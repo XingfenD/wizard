@@ -57,17 +57,21 @@ class ShareController extends Controller
      *
      * @param Request $request
      * @param $project_id
-     * @param $page_id
+     * @param $page_external_id
      * @return array
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function delete(Request $request, $project_id, $page_id)
+    public function delete(Request $request, $project_id, $page_external_id)
     {
         $this->validateParameters(
-            ['page_id' => $page_id,],
-            ['page_id' => "required|page_exist:{$project_id}",]
+            ['page_external_id' => $page_external_id,],
+            ['page_external_id' => "required|page_exist_by_external_id:{$project_id}",]
         );
 
+        $page = Document::where('project_id', $project_id)
+                        ->where('external_id', $page_external_id)
+                        ->firstOrFail();
+        $page_id = $page->id;
         $this->authorize('page-share', $page_id);
 
         PageShare::where('project_id', $project_id)
@@ -83,18 +87,22 @@ class ShareController extends Controller
      *
      * @param Request $request
      * @param         $project_id
-     * @param         $page_id
+     * @param         $page_external_id
      *
      * @return array
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function create(Request $request, $project_id, $page_id)
+    public function create(Request $request, $project_id, $page_external_id)
     {
         $this->validateParameters(
-            ['page_id' => $page_id,],
-            ['page_id' => "required|page_exist:{$project_id}",]
+            ['page_external_id' => $page_external_id,],
+            ['page_external_id' => "required|page_exist_by_external_id:{$project_id}",]
         );
 
+        $page = Document::where('project_id', $project_id)
+                        ->where('external_id', $page_external_id)
+                        ->firstOrFail();
+        $page_id = $page->id;
         $this->authorize('page-share', $page_id);
 
         $share = PageShare::where('project_id', $project_id)

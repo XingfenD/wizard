@@ -271,7 +271,7 @@
         $('.wz-share-cancel').on('click', function (e) {
             e.preventDefault();
             $.wz.confirm('确定取消分享？', function () {
-                $.wz.request('delete', '{!! wzRoute('project:doc:share', ['id' => $project->id, 'page_id' => $pageItem->id]) !!}', {}, function(data) {
+                $.wz.request('delete', '{!! wzRoute('project:doc:share', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) !!}', {}, function(data) {
                     window.location.reload(true);
                 });
             });
