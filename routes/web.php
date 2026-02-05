@@ -217,11 +217,11 @@ Route::group(['middleware' => 'locale'], function () {
                      ->name('doc:comment');
 
                 // 文档附件
-                Route::get('/{id}/doc/{page_id}/attachments', 'AttachmentController@page')
+                Route::get('/{id}/doc/{page_external_id}/attachments', 'AttachmentController@page')
                      ->name('doc:attachment');
-                Route::delete('/{id}/doc/{page_id}/attachments/{attachment_id}',
+                Route::delete('/{id}/doc/{page_external_id}/attachments/{attachment_id}',
                     'AttachmentController@delete')->name('doc:attachment:delete');
-                Route::post('/{id}/doc/{page_id}/attachments', 'AttachmentController@upload')
+                Route::post('/{id}/doc/{page_external_id}/attachments', 'AttachmentController@upload')
                      ->name('doc:attachment:upload');
 
                 // ajax获取文档是否过期

@@ -13,7 +13,9 @@
  * @copyright   Fendy <xingfen.fendy@outlook.com>
  *
  * Modifications:
- *  1. Use Document external id instead of page id (comment module)
+ *  1. Use Document external id instead of page id
+ *      a. for comment module
+ *      b. for notification module
  */
 
 namespace App\Http\Controllers;
@@ -62,8 +64,6 @@ class CommentController extends Controller
         if (!$policy->view(\Auth::user(), $id)) {
             abort(404);
         }
-        debugLog('page_external_id'.$page_external_id);
-        debugLog('page_id'.Document::idFromExternalID($page_external_id));
 
         $comment = Comment::create([
             'content'           => comment_filter($content),// TODO XSS过滤

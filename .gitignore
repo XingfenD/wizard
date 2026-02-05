@@ -16,3 +16,4 @@ yarn-error.log
 /old2
 custom/
 composer.lock
+.Ds_Store

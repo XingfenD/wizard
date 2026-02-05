@@ -14,6 +14,7 @@
  *
  * Modifications:
  *  1. Use Document external id instead of page id
+ *      a. for core document controller
  */
 
 namespace App\Http\Controllers;
@@ -158,9 +159,6 @@ class DocumentController extends Controller
 
         $typeInt = array_flip($this->types)[$type];
 
-        debugLog('typeInt:'.$typeInt);
-        debugLog('external_id:'.md5((string)snowflake($typeInt)));
-
         $pageItem = Document::create([
             'pid'               => $pid,
             'title'             => $title,
@@ -238,9 +236,8 @@ class DocumentController extends Controller
         $forceSave = $request->input('force', false);
         $sortLevel = $request->input('sort_level', 1000);
         $syncUrl = $request->input('sync_url');
-        debugLog('updating title:'.$title);
-        /** @var Document $pageItem */
-        $pageItem = Document::where('external_id', $page_external_id)->firstOrFail();
+
+        $pageItem = Document::findByExternalID($projectID, $page_external_id);
 
         // 类型如果是表格，则需要检验表格内容是否合法
         if ($pageItem->isTable()) {

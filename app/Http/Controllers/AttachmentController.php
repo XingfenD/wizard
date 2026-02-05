@@ -2,10 +2,20 @@
 /**
  * Wizard
  *
- * @link      https://aicode.cc/
- * @copyright 管宜尧 <mylxsw@aicode.cc>
+ * Original Code Copyright
+ * @license     Apache2.0
+ * @link        https://aicode.cc/
+ * @copyright   管宜尧 <mylxsw@aicode.cc>
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. Use Document external id instead of page id
+ *      a. for attachments module
  */
-
 
 namespace App\Http\Controllers;
 
@@ -22,13 +32,13 @@ class AttachmentController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function upload(Request $request, $id, $page_id)
+    public function upload(Request $request, $id, $page_external_id)
     {
         $this->validate(
             $request,
@@ -43,7 +53,7 @@ class AttachmentController extends Controller
 
         $file = $request->file('attachment');
         $extension = $this->getFileExtension($file);
-
+        $page_id = Document::idFromExternalID($page_external_id);
         $this->validateParameters(
             [
                 'extension'  => strtolower($extension),
@@ -76,7 +86,7 @@ class AttachmentController extends Controller
             'project_id' => $id
         ]);
         $this->alertSuccess(__('common.operation_success'));
-        return redirect(wzRoute('project:doc:attachment', ['id' => $id, 'page_id' => $page_id]));
+        return redirect(wzRoute('project:doc:attachment', ['id' => $id, 'page_external_id' => $page_external_id]));
     }
 
 
@@ -119,16 +129,17 @@ class AttachmentController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function page(Request $request, $id, $page_id)
+    public function page(Request $request, $id, $page_external_id)
     {
-        $page = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $page = Document::findByExternalID($id, $page_external_id);
         /** @var Project $project */
         $project = Project::findOrFail($id);
 
+        $page_id = $page->id;
         $attachments = Attachment::with('user')
                                  ->where('page_id', $page_id)
                                  ->where('project_id', $id)
@@ -166,28 +177,28 @@ class AttachmentController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      * @param         $attachment_id
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function delete(Request $request, $id, $page_id, $attachment_id)
+    public function delete(Request $request, $id, $page_external_id, $attachment_id)
     {
         $this->validateParameters(
             [
-                'project_id'    => $id,
-                'page_id'       => $page_id,
-                'attachment_id' => $attachment_id,
+                'project_id'        => $id,
+                'page_external_id'  => $page_external_id,
+                'attachment_id'     => $attachment_id,
             ],
             [
-                'project_id'    => "required|integer|min:1|project_exist",
-                'page_id'       => "required|integer|min:1|page_exist:{$id}",
-                'attachment_id' => 'required|integer|min:1',
+                'project_id'        => "required|integer|min:1|project_exist",
+                'page_external_id'  => "required|string|min:1|page_exist_by_external_id:{$id}",
+                'attachment_id'     => 'required|integer|min:1',
             ]
         );
 
-        $pageItem = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $pageItem = Document::findByExternalID($id, $page_external_id);
         $this->authorize('page-edit', $pageItem);
 
         $pageItem->attachments()->where('id', $attachment_id)->delete();
@@ -195,7 +206,7 @@ class AttachmentController extends Controller
         $this->alertSuccess(__('common.delete_success'));
         return redirect(wzRoute('project:doc:attachment', [
             'id'      => $id,
-            'page_id' => $page_id,
+            'page_external_id' => $page_external_id,
         ]));
     }
 }
