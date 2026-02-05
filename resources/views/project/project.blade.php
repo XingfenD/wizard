@@ -230,16 +230,16 @@
     $(function () {
         moment.locale('zh-cn');
         @if(!Auth::guest())
-        $.wz.request('get', '{!! wzRoute('operation-log:recently', ['limit' => 'project', 'project_id' => $project->id]) !!}', {}, function (data) {
-            if (data.trim() === '') {
-                $('.wz-recently-log').addClass('d-none');
-            } else {
-                $('#operation-log-recently').html(data);
-                $('#operation-log-recently .wz-operation-log-time').map(function() {
-                    $(this).html(moment($(this).html(), 'YYYY-MM-DD hh:mm:ss').fromNow());
-                });
-            }
-        }, null, 'html');
+        // $.wz.request('get', '{!! wzRoute('operation-log:recently', ['limit' => 'project', 'project_id' => $project->id]) !!}', {}, function (data) {
+        //     if (data.trim() === '') {
+        //         $('.wz-recently-log').addClass('d-none');
+        //     } else {
+        //         $('#operation-log-recently').html(data);
+        //         $('#operation-log-recently .wz-operation-log-time').map(function() {
+        //             $(this).html(moment($(this).html(), 'YYYY-MM-DD hh:mm:ss').fromNow());
+        //         });
+        //     }
+        // }, null, 'html');
         @endif
         // 快捷键导出
         var exportBtn = $('#wz-export-trigger');

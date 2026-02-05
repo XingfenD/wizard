@@ -303,30 +303,30 @@
             });
 
             // 自动检查文档是否过期
-            (function () {
-                var lastModifiedAt = $('input[name=last_modified_at]').val();
-                var checkExpiredURL = '{{ wzRoute('project:doc:expired', ['id' => $project->id, 'page_id' => $pageItem->id]) }}';
-                var continueCheck = function () {
-                    window.document_check_task = window.setTimeout(function () {
-                        $.wz.request('get', checkExpiredURL, {l: lastModifiedAt}, function (data) {
-                            // 没有过期则继续检查
-                            if (!data.expired) {
-                                continueCheck();
-                                return false;
-                            }
+            // (function () {
+            //     var lastModifiedAt = $('input[name=last_modified_at]').val();
+            //     var checkExpiredURL = '{{ wzRoute('project:doc:expired', ['id' => $project->id, 'page_id' => $pageItem->id]) }}';
+            //     var continueCheck = function () {
+            //         window.document_check_task = window.setTimeout(function () {
+            //             $.wz.request('get', checkExpiredURL, {l: lastModifiedAt}, function (data) {
+            //                 // 没有过期则继续检查
+            //                 if (!data.expired) {
+            //                     continueCheck();
+            //                     return false;
+            //                 }
 
-                            // 已过期，禁用保存按钮，同时页面提示
-                            $('#wz-doc-form-submit').prop('disabled', 'disabled');
-                            $('#wz-error-box').fadeIn('fast').html(data.message);
+            //                 // 已过期，禁用保存按钮，同时页面提示
+            //                 $('#wz-doc-form-submit').prop('disabled', 'disabled');
+            //                 $('#wz-error-box').fadeIn('fast').html(data.message);
 
-                        }, continueCheck);
-                    }, 5000);
+            //             }, continueCheck);
+            //         }, 5000);
 
-                    return true;
-                };
+            //         return true;
+            //     };
 
-                continueCheck();
-            })();
+            //     continueCheck();
+            // })();
             @endif
 
 
