@@ -221,9 +221,9 @@ Route::group(['middleware' => 'locale'], function () {
                 // 文档历史记录
                 Route::get('/{id}/doc/{page_external_id}/histories', 'HistoryController@pages')
                      ->name('doc:history');
-                Route::get('/{id}/doc/{page_id}/histories/{history_id}', 'HistoryController@page')
+                Route::get('/{id}/doc/{page_external_id}/histories/{history_id}', 'HistoryController@page')
                      ->name('doc:history:show');
-                Route::put('/{id}/doc/{page_id}/histories/{history_id}', 'HistoryController@recover')
+                Route::put('/{id}/doc/{page_external_id}/histories/{history_id}', 'HistoryController@recover')
                      ->name('doc:history:recover');
 
                 // 关注项目

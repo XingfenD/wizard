@@ -60,28 +60,28 @@ class HistoryController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      * @param         $history_id
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function page(Request $request, $id, $page_id, $history_id)
+    public function page(Request $request, $id, $page_external_id, $history_id)
     {
-        $page = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $page = Document::where('project_id', $id)->where('external_id', $page_external_id)->firstOrFail();
         /** @var Project $project */
         $project = Project::findOrFail($id);
 
-        $history = DocumentHistory::where('page_id', $page_id)
+        $history = DocumentHistory::where('page_id', $page->id)
             ->where('id', $history_id)->firstOrFail();
         $type    =  $this->types[$page->type];
 
         return view('doc.history-doc', [
             'history'     => $history,
             'project'     => $project,
-            'pageID'      => $page_id,
+            'pageID'      => $page->id,
             'pageItem'    => $page,
             'type'        => $type,
-            'navigators'  => navigator($id, $page_id),
+            'navigators'  => navigator($id, $page_external_id),
             'isFavorited' => $project->isFavoriteByUser(\Auth::user()),
         ]);
     }
@@ -91,24 +91,24 @@ class HistoryController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      * @param         $history_id
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function recover(Request $request, $id, $page_id, $history_id)
+    public function recover(Request $request, $id, $page_external_id, $history_id)
     {
-        $pageItem = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $pageItem = Document::where('project_id', $id)->where('external_id', $page_external_id)->firstOrFail();
         $this->authorize('page-recover', $pageItem);
 
         $historyItem = DocumentHistory::where('project_id', $id)->where('id', $history_id)
-            ->where('page_id', $page_id)->firstOrFail();
+            ->where('page_id', $pageItem->id)->firstOrFail();
 
         event(new DocumentRecovered(Document::recover($pageItem, $historyItem)));
         $this->alertSuccess(__('document.document_recover_success'));
 
-        return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_id]));
+        return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_external_id]));
     }
 
     /**

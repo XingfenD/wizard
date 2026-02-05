@@ -13,7 +13,7 @@
                        data-confirm="@lang('document.recover_confirm')" style="position: absolute; top: 15px; right: 80px;">
                         <i class="material-icons" title="@lang('document.btn_recover')" data-toggle="tooltip">redo</i>
                         <form id="form-recover-{{ $history->id }}"
-                              action="{{ wzRoute('project:doc:history:recover', ['id' => $project->id, 'p' => $pageItem->id, 'history_id' => $history->id]) }}"
+                              action="{{ wzRoute('project:doc:history:recover', ['id' => $project->id, 'p' => $pageItem->external_id, 'history_id' => $history->id]) }}"
                               method="post">{{ csrf_field() }}{{ method_field('PUT') }}</form>
                     </a>
                 @endcan
