@@ -2,8 +2,19 @@
 /**
  * Wizard
  *
- * @link      https://aicode.cc/
- * @copyright 管宜尧 <mylxsw@aicode.cc>
+ * Original Code Copyright
+ * @license     Apache2.0
+ * @link        https://aicode.cc/
+ * @copyright   管宜尧 <mylxsw@aicode.cc>
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. Add snowflake algorithm to generate and parse external id
+ *  2. Add debug log function to print debug message to debugbar
  */
 
 use App\Repositories\Catalog;

@@ -31,7 +31,7 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 - [多主题切换](https://github.com/mylxsw/wizard/wiki/%E9%BB%91%E6%9A%97%E4%B8%BB%E9%A2%98%E5%88%87%E6%8D%A2)
 
 如果想快速体验一下Wizard的功能，可以使用Docker来创建一个完整的Wizard服务
-    
+
 > 进入项目的根目录，执行 `docker-compose up`，就可以快速创建一个Wizard服务了，访问地址 http://localhost:8080 。
 
 ## 起源
@@ -51,7 +51,6 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 - **LDAP支持** 很多公司都会使用 LDAP 来统一的管理公司员工的账号，员工的在公司内部的所有系统中都是用同一套帐号来登录各种系统比如 Jira，Wiki，Gitlab 等，Wizard 也提供了对 LDAP 的支持，只需要简单的几个配置，就可以快速的接入公司的统一帐号体系。
 - **文档附件**，**文档分享**，**统计**，**文档排序**，**模板管理**，**文档评论** ...
 
-
 ## 功能演示
 
 请查看项目的 [Wiki](https://github.com/mylxsw/wizard/wiki) 文档。
@@ -66,7 +65,7 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 
 目前支持两种安装方式，如果你熟悉Docker，可以直接使用Docker容器的方式来运行该项目，这也是最简单的方式了。如果你没有使用Docker或者不知道什么是Docker，那么请直接参考手动安装部分。
 
-### 通过 Docker 安装 
+### 通过 Docker 安装
 
 详细安装方法参考 Docker Hub [mylxsw/wizard](https://hub.docker.com/r/mylxsw/wizard)。
 
@@ -74,32 +73,35 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 
 首先对于新安装用户，需要执行数据库的初始化
 
-    docker run -it --rm --name wizard \
-        -e DB_HOST=host.docker.internal \
-        -e DB_PORT=3306  \
-        -e DB_DATABASE=wizard  \
-        -e DB_USERNAME=wizard  \
-        -e DB_PASSWORD=wizard  \
-        mylxsw/wizard 初始化命令
-        
-        
+```bash
+docker run -it --rm --name wizard \
+    -e DB_HOST=host.docker.internal \
+    -e DB_PORT=3306  \
+    -e DB_DATABASE=wizard  \
+    -e DB_USERNAME=wizard  \
+    -e DB_PASSWORD=wizard  \
+# mylxsw/wizard 初始化命令
+```
+
 这里的 **初始化命令** 包含两个，依次执行即可
-  
-  - php artisan migrate:install
-  - php artisan migrate
+
+- php artisan migrate:install
+- php artisan migrate
 
 最后，直接运行下面的 Docker 命令即可
 
-    docker run -d --name wizard \
-        -e DB_HOST=host.docker.internal \
-        -e DB_PORT=3306  \
-        -e DB_DATABASE=wizard  \
-        -e DB_USERNAME=wizard  \
-        -e DB_PASSWORD=wizard  \
-        -p 8080:80 \
-        -v /Users/mylxsw/Downloads:/webroot/storage/app/public   \
-        mylxsw/wizard
-        
+```bash
+docker run -d --name wizard \
+    -e DB_HOST=host.docker.internal \
+    -e DB_PORT=3306  \
+    -e DB_DATABASE=wizard  \
+    -e DB_USERNAME=wizard  \
+    -e DB_PASSWORD=wizard  \
+    -p 8080:80 \
+    -v /Users/mylxsw/Downloads:/webroot/storage/app/public   \
+    mylxsw/wizard
+```
+
 简要说明：
 
 - `-e` 指定配置，用环境变量的形式覆盖 `.env` 中的配置
@@ -113,39 +115,61 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 
 我们需要创建一个Dockerfile，在Dockerfile中添加环境配置，比如我采用了宿主机上安装的MySQL服务器，就有了下面的这段Dockerfile配置
 
-    FROM mylxsw/wizard:latest
+```dockerfile
+FROM mylxsw/wizard:latest
 
-    # 数据库连接配置
-    # 这里可以根据需要添加其它的Env配置，可用选项参考项目的.env.example文件
-    ENV DB_CONNECTION=mysql
-    ENV DB_HOST=host.docker.internal
-    ENV DB_PORT=3306
-    ENV DB_DATABASE=wizard_2
-    ENV DB_USERNAME=wizard
-    ENV DB_PASSWORD=wizard
-    ENV WIZARD_NEED_ACTIVATE=false
-    # 访问地址，只有正确配置后，导出的 markdown 文档图片才能正常展示
-    ENV APP_URL=http://localhost:8080
-    
-    # 文件上传存储目录
-    VOLUME /webroot/storage/app/public
+# 数据库连接配置
+# 这里可以根据需要添加其它的Env配置，可用选项参考项目的.env.example文件
+ENV DB_CONNECTION=mysql
+ENV DB_HOST=host.docker.internal
+ENV DB_PORT=3306
+ENV DB_DATABASE=wizard_2
+ENV DB_USERNAME=wizard
+ENV DB_PASSWORD=wizard
+ENV WIZARD_NEED_ACTIVATE=false
+# 访问地址，只有正确配置后，导出的 markdown 文档图片才能正常展示
+ENV APP_URL=http://localhost:8080
 
-    RUN php artisan config:cache
+# 文件上传存储目录
+VOLUME /webroot/storage/app/public
+
+RUN php artisan config:cache
+```
 
 执行构建
 
-    docker build -t my-wizard .
+```bash
+docker build -t my-wizard .
+```
 
 数据库初始化
 
-    docker run -it --rm --name my-wizard my-wizard php artisan migrate:install
-    docker run -it --rm --name my-wizard my-wizard php artisan migrate
+```bash
+docker run -it --rm --name my-wizard my-wizard php artisan migrate:install
+docker run -it --rm --name my-wizard my-wizard php artisan migrate
+```
 
 运行
 
-    docker run -d --name my-wizard -p 8080:80  my-wizard
+```bash
+docker run -d --name my-wizard -p 8080:80  my-wizard
+```
 
-然后就可以通过 http://localhost:8080 访问 Wizard 了。    
+然后就可以通过 http://localhost:8080 访问 Wizard 了。
+
+### 方法三
+
+由于项目已经十分古老，项目依赖、项目环境配置难度都比项目开发初难以高很多
+
+经过Fendy<xingfen.fendy@outlook.com>修改部分 Dockerfile 后，项目可以在如下系统上正常运行：
+
+- MacOS on Apple Silicon
+
+运行如下命令即可无痛启动项目
+
+```bash
+docker-compose up -d
+```
 
 ### 手动安装
 
@@ -156,16 +180,16 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 以下组件的安装配置这里就不做详细展开，可以自行 百度/Google 安装方法。
 
 - PHP 7.2 + (需要启用以下扩展)
-    - OpenSSL PHP Extension
-    - PDO PHP Extension
-    - Mbstring PHP Extension
-    - Tokenizer PHP Extension
-    - XML PHP Extension
-    - Ctype PHP Extension
-    - JSON PHP Extension
-    - BCMath PHP Extension
-    - LDAP PHP Extension
-    - Zlib PHP Extension （PDF 导出功能需要用到）
+  - OpenSSL PHP Extension
+  - PDO PHP Extension
+  - Mbstring PHP Extension
+  - Tokenizer PHP Extension
+  - XML PHP Extension
+  - Ctype PHP Extension
+  - JSON PHP Extension
+  - BCMath PHP Extension
+  - LDAP PHP Extension
+  - Zlib PHP Extension （PDF 导出功能需要用到）
 - composer.phar
 - MySQL 5.7 + / MariaDB （需要支持ARCHIVE存储引擎，MariaDB 10.0+ 默认没有启用参考 **FAQ 3**）
 - Nginx
@@ -177,13 +201,17 @@ Wizard是一款开源文档管理系统，目前支持三种类型的文档管�
 
 推荐使用 git 来下载项目代码到服务器，我们假定将该项目放在服务器的 `/data/webroot` 目录
 
-    cd /data/webroot
-    git clone https://github.com/mylxsw/wizard.git
-    cd wizard
+```bash
+cd /data/webroot
+git clone https://github.com/mylxsw/wizard.git
+cd wizard
+```
 
 下载代码之后，使用 **composer** 安装项目依赖
 
-    composer install --prefer-dist --ignore-platform-reqs
+```bash
+composer install --prefer-dist --ignore-platform-reqs
+```
 
 composer 会在在项目目录中创建 **vender** 目录，其中包含了项目所依赖的所有第三方代码库。
 
@@ -191,66 +219,79 @@ composer 会在在项目目录中创建 **vender** 目录，其中包含了项�
 
 #### 配置
 
-复制一份配置文件 
+复制一份配置文件
 
-    cp .env.example .env
+```bash
+cp .env.example .env
+```
 
 修改 `.env` 中的配置信息，比如 MySQL 连接信息，文件存储目录，项目网址等。
 
 接下来创建数据库，提前在MySQL中创建好项目的数据库，然后在项目目录执行下面的命令
 
-    php artisan migrate:install
-    php artisan migrate
+```bash
+php artisan migrate:install
+php artisan migrate
+```
 
 接下来配置文件上传目录
 
-    php artisan storage:link
+```bash
+php artisan storage:link
+```
 
 执行该命令后会在 public 目录下创建 `storage/app/public` 目录的符号链接。
 
 在Nginx中配置项目的访问地址
 
-    server {
-        listen       80;
-        server_name  wizard.example.com;
-        root         /data/webroot/wizard/public;
-        index        index.php;
-    
-        location / {
-            index index.php index.html index.htm;
-            try_files $uri $uri/ /index.php?$query_string;
-        }
-        
-        location ~ .*\.(gif|jpg|png|bmp|swf|js|css)$ {
-            try_files $uri  =302;
-        }
-        
-        location ~ .*\.php$ {
-            # php-fpm 监听地址，这里用了socket方式
-            fastcgi_pass  unix:/usr/local/php/var/run/php-cgi.sock;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            fastcgi_index index.php;
-            include fastcgi_params;
-        }
+```nginx
+server {
+    listen       80;
+    server_name  wizard.example.com;
+    root         /data/webroot/wizard/public;
+    index        index.php;
+
+    location / {
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /index.php?$query_string;
     }
+
+    location ~ .*\.(gif|jpg|png|bmp|swf|js|css)$ {
+        try_files $uri  =302;
+    }
+
+    location ~ .*\.php$ {
+        # php-fpm 监听地址，这里用了socket方式
+        fastcgi_pass  unix:/usr/local/php/var/run/php-cgi.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_index index.php;
+        include fastcgi_params;
+    }
+}
+```
 
 #### 升级
 
 项目升级过程非常简单，只需要使用git拉取最新代码（git pull），然后执行下面的命令完成数据库迁移和依赖更新就OK了。
 
-    composer install --prefer-dist --ignore-platform-reqs
-    php artisan migrate
-    
+```bash
+composer install --prefer-dist --ignore-platform-reqs
+php artisan migrate
+```
+
 如果是用 Docker 部署的话，在重新拉取最新镜像之后，执行下面的命令就可以了
 
-    docker run -it --rm my-wizard php artisan migrate
-
+```bash
+docker run -it --rm my-wizard php artisan migrate
+```
 
 ### 初始化
 
-安装完成后，Wizard项目就可以通过浏览器访问了，接下来需要访问注册页面创建初始用户 
+安装完成后，Wizard项目就可以通过浏览器访问了，接下来需要访问注册页面创建初始用户
 
-    http://项目地址/register
+```url
+http://项目地址/register
+```
 
 在系统中注册的第一个用户为默认管理员角色。
 
@@ -267,41 +308,40 @@ composer 会在在项目目录中创建 **vender** 目录，其中包含了项�
 
     因为Mariadb版本比较新，对应的MySQL版本在8.0之后也可能会有问题（默认认证方式修改为了`caching_sha2_password`），解决办法连接到数据库，修改一下密码的认证方式为 `mysql_native_password`：
 
-        ALTER USER 'USERNAME'@'HOSTNAME' IDENTIFIED WITH mysql_native_password BY 'PASSWORD';
+```sql
+ALTER USER 'USERNAME'@'HOSTNAME' IDENTIFIED WITH mysql_native_password BY 'PASSWORD';
+```
 
-    > 参考 [Caching SHA-2 Pluggable Authentication](https://dev.mysql.com/doc/refman/8.0/en/caching-sha2-pluggable-authentication.html)
+> 参考 [Caching SHA-2 Pluggable Authentication](https://dev.mysql.com/doc/refman/8.0/en/caching-sha2-pluggable-authentication.html)
 
-3. 数据库使用 Mariadb 10.0+ 版本时，执行数据库迁移报错 `Unknown storage engine 'ARCHIVE'` 
-
+3. 数据库使用 Mariadb 10.0+ 版本时，执行数据库迁移报错 `Unknown storage engine 'ARCHIVE'`
     操作日志存储用到了 **ARCHIVE** 存储引擎，Mariadb 10.0 版本之后默认是没有安装这个存储引擎的
-
     > The ARCHIVE storage engine was installed by default until MariaDB 10.0. In MariaDB 10.1 and later, the storage engine's plugin will have to be installed.
-
     所以解决方案有下面这两种（**推荐第一种**）
-
     1. 最简单的方式时在Mariadb中安装这个插件，只需要连接到Mariadb之后执行 `INSTALL SONAME 'ha_archive';` 命令就可以了，**不需要** 重启数据库
-
     2. 第二种办法时不安装 **ARCHIVE** 存储引擎，修改 `$WIZARD_HOME/database/migrations/2017_08_03_232417_create_operation_logs_table.php` 文件的第 17 行，将`$table->engine = 'ARCHIVE';` 注释掉（完成迁移之后记得改回去，避免以后使用 `git pull` 来升级系统产生冲突）
-        
-        ```diff
-         Schema::create('wz_operation_logs', function (Blueprint $table) {
-        -$table->engine = 'ARCHIVE';
-        +// $table->engine = 'ARCHIVE';
-         
-         $table->increments('id');
-        ```
+
+```diff
+    Schema::create('wz_operation_logs', function (Blueprint $table) {
+-$table->engine = 'ARCHIVE';
++// $table->engine = 'ARCHIVE';
+
+    $table->increments('id');
+```
 
 4. 默认上传文件大小限制为 2M，这个限制并不是 Wizard 自身的限制，而是运行环境的限制，如何提高上传文件大小限制呢？
 
    首先需要修改 PHP 的配置文件 `php.ini`，修改以下两行
-   
-       ; 上传文件大小限制
-       upload_max_filesize = 100M
-       ; 表单提交大小限制，必须大于 upload_max_filesize，或者可以设置为 0，不做任何限制
-       post_max_size = 0
-   
+
+```ini
+; 上传文件大小限制
+upload_max_filesize = 100M
+; 表单提交大小限制，必须大于 upload_max_filesize，或者可以设置为 0，不做任何限制
+post_max_size = 0
+```
+
    然后，根据 web 服务器的不同进行修改
-   
+
    - **nginx**： 在 nginx 配置中添加 `client_max_body_size 120M;` 来指定最大 body 大小，可以参考 `docker-compose/nginx.conf` 的配置
    - **apache**：修改 Wizard 目录 `public/.htaccess` 文件中 `LimitRequestBody 0` 选项的值即可，默认为0表示不限制（默认已经修改过）
 
@@ -312,7 +352,6 @@ composer 会在在项目目录中创建 **vender** 目录，其中包含了项�
 6. 服务启动后，访问页面报错 500，没有具体错误信息，无法顺利排查问题
 
    最简单的办法是可以通过查看错误日志来排查问题，日志文件在 `storage/logs/` 目录。如果不够直观，可以在 `.env` 配置文件中修改 `APP_DEBUG=true` 来启用调试模式，在访问页面就会展示具体报错信息了。在 Docker 环境中，可以在启动命令中添加 `-e APP_DEBUG=true` 来启用 DEBUG 模式。
-
 
 ## Stargazers over time
 
