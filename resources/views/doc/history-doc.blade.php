@@ -2,7 +2,7 @@
 @section('page-content')
     <div class="wz-project-main" style="padding-top: 10px">
         <nav class="wz-page-control clearfix">
-            <a href="{{ wzRoute('project:doc:history', ['id' => $project->id, 'page_id' => $pageItem->id ]) }}"
+            <a href="{{ wzRoute('project:doc:history', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}"
                class="btn btn-link"><i class="material-icons">arrow_back</i></a>
             <h1 class="wz-page-title">
                 {{ $history->title }} <span class="label label-default">@lang('document.page_history')</span>

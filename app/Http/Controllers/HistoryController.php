@@ -30,27 +30,27 @@ class HistoryController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function pages(Request $request, $id, $page_id)
+    public function pages(Request $request, $id, $page_external_id)
     {
-        $page = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $page = Document::where('project_id', $id)->where('external_id', $page_external_id)->firstOrFail();
         /** @var Project $project */
         $project = Project::findOrFail($id);
 
         $histories = DocumentHistory::with('operator')
-            ->where('page_id', $page_id)
+            ->where('page_id', $page->id)
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
         return view('doc.history', [
             'histories'   => $histories,
             'project'     => $project,
-            'pageID'      => $page_id,
+            'pageID'      => $page->id,
             'pageItem'    => $page,
-            'navigators'  => navigator($id, $page_id),
+            'navigators'  => navigator($id, $page_external_id),
             'isFavorited' => $project->isFavoriteByUser(\Auth::user()),
         ]);
     }

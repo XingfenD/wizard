@@ -7,7 +7,7 @@
 
         <div class="dropdown-menu wz-dropdown-menu-left" aria-labelledby="wz-doc-more-btn">
 
-            <a href="{{ wzRoute('project:doc:history', ['id' => $project->id, 'page_id' => $pageItem->id ]) }}"
+            <a href="{{ wzRoute('project:doc:history', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}"
                class="dropdown-item">
                 <span class="fa fa-history mr-2"></span>
                 @lang('document.page_history')
@@ -31,7 +31,7 @@
                     <span class="fa fa-outdent mr-2"></span>
                     {{ $pageItem->status == \App\Repositories\Document::STATUS_NORMAL ? '标记' : '取消' }}<del style="font-style: oblique">已过时</del>
                     <form id="form-outdated-{{ $pageItem->id }}" method="post"
-                          action="{{ wzRoute('project:doc:mark-status', ['id' => $project->id, 'page_id' => $pageItem->id]) }}">
+                          action="{{ wzRoute('project:doc:mark-status', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}">
                         {{ method_field('PUT') }}{{ csrf_field() }}
                         <input type="hidden" name="status" value="{{ $pageItem->status == \App\Repositories\Document::STATUS_NORMAL ? \App\Repositories\Document::STATUS_OUTDATED : \App\Repositories\Document::STATUS_NORMAL }}">
                     </form>
@@ -42,7 +42,7 @@
                     <span class="fa fa-trash mr-2"></span>
                     @lang('common.btn_delete')
                     <form id="form-{{ $pageItem->id }}" method="post"
-                          action="{{ wzRoute('project:doc:delete', ['id' => $project->id, 'page_id' => $pageItem->id]) }}">
+                          action="{{ wzRoute('project:doc:delete', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}">
                         {{ method_field('DELETE') }}{{ csrf_field() }}
                     </form>
                 </a>

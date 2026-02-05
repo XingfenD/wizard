@@ -179,7 +179,7 @@ class DocumentController extends Controller
                 ),
                 'show' => wzRoute(
                     'project:home',
-                    ['id' => $projectID, 'p' => $pageItem->id]
+                    ['id' => $projectID, 'p' => $pageItem->external_id]
                 )
             ],
             'message'  => __('common.operation_success'),
@@ -299,12 +299,12 @@ class DocumentController extends Controller
      *
      * @param Request $request
      * @param $id
-     * @param $page_id
+     * @param $page_external_id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function markStatus(Request $request, $id, $page_id)
+    public function markStatus(Request $request, $id, $page_external_id)
     {
         $this->validate(
             $request,
@@ -314,7 +314,7 @@ class DocumentController extends Controller
         );
 
         /** @var Document $pageItem */
-        $pageItem = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $pageItem = Document::where('project_id', $id)->where('external_id', $page_external_id)->firstOrFail();
         $this->authorize('page-edit', $pageItem);
 
         $pageItem->status = $request->input('status');
@@ -327,7 +327,7 @@ class DocumentController extends Controller
         }
 
         $this->alertSuccess('操作成功');
-        return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_id]));
+        return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_external_id]));
     }
 
     /**
@@ -376,15 +376,15 @@ class DocumentController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Exception
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function deletePage(Request $request, $id, $page_id)
+    public function deletePage(Request $request, $id, $page_external_id)
     {
-        $pageItem = Document::where('id', $page_id)->where('project_id', $id)->firstOrFail();
+        $pageItem = Document::where('external_id', $page_external_id)->where('project_id', $id)->firstOrFail();
         $this->authorize('page-edit', $pageItem);
 
         // 页面删除后，所有下级页面全部移动到该页面的上级

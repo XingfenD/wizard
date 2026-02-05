@@ -187,7 +187,7 @@ Route::group(['middleware' => 'locale'], function () {
                 Route::get('/{id}/doc/{page_external_id}', 'DocumentController@editPage')->name('doc:edit:show');
                 Route::post('/{id}/doc/{page_external_id}', 'DocumentController@editPageHandle')
                      ->name('doc:edit:handle');
-                Route::delete('/{id}/doc/{page_id}', 'DocumentController@deletePage')
+                Route::delete('/{id}/doc/{page_external_id}', 'DocumentController@deletePage')
                      ->name('doc:delete');
 
                 // 文档同步
@@ -195,7 +195,7 @@ Route::group(['middleware' => 'locale'], function () {
                      ->name('doc:sync-from');
 
                 // 文档标记
-                Route::put('/{id}/doc/{page_id}/mark-status', 'DocumentController@markStatus')->name('doc:mark-status');
+                Route::put('/{id}/doc/{page_external_id}/mark-status', 'DocumentController@markStatus')->name('doc:mark-status');
 
                 // 文档分享
                 Route::post('/{id}/doc/{page_id}/share', 'ShareController@create')->name('doc:share');
@@ -219,7 +219,7 @@ Route::group(['middleware' => 'locale'], function () {
                 Route::post('/{id}/doc/{page_id}/score', 'DocumentController@updateDocumentScore')->name('doc:score');
 
                 // 文档历史记录
-                Route::get('/{id}/doc/{page_id}/histories', 'HistoryController@pages')
+                Route::get('/{id}/doc/{page_external_id}/histories', 'HistoryController@pages')
                      ->name('doc:history');
                 Route::get('/{id}/doc/{page_id}/histories/{history_id}', 'HistoryController@page')
                      ->name('doc:history:show');
