@@ -108,7 +108,7 @@
                     SwaggerEditorStandalonePreset
                 ]
                 @if(!empty($pageItem))
-                ,url: "{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id, 'only_body' => 1]) }}"
+                ,url: "{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_external_id' => $pageItem->external_id, 'only_body' => 1]) }}"
                 @else
                 ,url: ""
                 @endif

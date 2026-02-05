@@ -26,8 +26,8 @@
                 @if(!empty($history))
                     <li role="presentation" class="mr-2">
                         <button type="button" wz-doc-compare-submit
-                                data-doc1="{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id]) }}"
-                                data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}"
+                                data-doc1="{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}"
+                                data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}"
                                 data-toggle="tooltip"
                                 title="@lang('common.btn_diff')" class="btn btn-primary  bmd-btn-icon">
                             <i class="material-icons">history</i>

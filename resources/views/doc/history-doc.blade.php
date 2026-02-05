@@ -18,8 +18,8 @@
                     </a>
                 @endcan
                 <a href="#" wz-doc-compare-submit
-                   data-doc1="{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" style="position: absolute; top: 15px; right: 40px;"
-                   data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}">
+                   data-doc1="{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}" style="position: absolute; top: 15px; right: 40px;"
+                   data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}">
                     <i class="material-icons" data-toggle="tooltip" title=" @lang('common.btn_diff')">tonality</i>
                 </a>
             </div>

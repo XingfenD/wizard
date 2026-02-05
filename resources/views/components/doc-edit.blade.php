@@ -277,7 +277,7 @@
                 e.preventDefault();
 
                 var compareUrl = '{{ wzRoute('doc:compare') }}';
-                var docUrl = '{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id]) }}';
+                var docUrl = '{{ wzRoute('project:doc:json', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}';
 
                 axios.get(docUrl).then(function (resp) {
                     var layerId = 'wz-frame-' + (new Date()).getTime();

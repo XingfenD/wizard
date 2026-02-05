@@ -19,8 +19,8 @@
                 <span class="wz-text-dashed"><a href="{{ wzRoute('project:home', ['id' => $log->project_id, 'p' => $log->doc_external_id]) }}">{{ $log->context->doc_title }}</a></span>
                 @if(!Auth::guest())
                     【<a href="#" wz-doc-compare-submit
-                        data-doc1="{{ wzRoute('project:doc:json', ['id' => $log->project_id, 'page_id' => $log->doc_external_id]) }}"
-                        data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $log->context->history_id ?? 0, 'id' => $log->project_id, 'page_id' => $log->doc_external_id]) }}">@lang('common.btn_diff')</a>】
+                        data-doc1="{{ wzRoute('project:doc:json', ['id' => $log->project_id, 'page_external_id' => $log->doc_external_id]) }}"
+                        data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $log->context->history_id ?? 0, 'id' => $log->project_id, 'page_external_id' => $log->doc_external_id]) }}">@lang('common.btn_diff')</a>】
                 @endif
             @elseif ($log->message == 'document_created')
                 创建了文档

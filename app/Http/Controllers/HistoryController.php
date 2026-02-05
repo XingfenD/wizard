@@ -116,20 +116,22 @@ class HistoryController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      * @param         $history_id
      *
      * @return array|mixed|string
      */
-    public function getPageJSON(Request $request, $id, $page_id, $history_id)
+    public function getPageJSON(Request $request, $id, $page_external_id, $history_id)
     {
         if ($history_id == 0) {
-            $document = Document::findOrFail($page_id);
-            $history  = DocumentHistory::where('page_id', $page_id)
+            $document = Document::where('external_id', $page_external_id)->firstOrFail();
+            $history  = DocumentHistory::where('page_id', $document->id)
                 ->where('id', '!=', $document->history_id)
                 ->orderBy('id', 'desc')
                 ->firstOrFail();
         } else {
+            $document = Document::where('external_id', $page_external_id)->firstOrFail();
+            $page_id = $document->id;
             $history = DocumentHistory::where('page_id', $page_id)->where('id', $history_id)
                 ->firstOrFail();
         }

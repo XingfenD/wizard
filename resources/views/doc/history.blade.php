@@ -36,8 +36,8 @@
                             &nbsp;
                             @if($index < count($histories) - 1)
                                 <a href="#" wz-doc-compare-submit
-                                   data-doc1="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}"
-                                   data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $histories[$index + 1]->id, 'id' => $project->id, 'page_id' => $pageItem->id]) }}">
+                                   data-doc1="{{ wzRoute('project:doc:history:json', ['history_id' => $history->id, 'id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}"
+                                   data-doc2="{{ wzRoute('project:doc:history:json', ['history_id' => $histories[$index + 1]->id, 'id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}">
                                     <i class="material-icons" data-toggle="tooltip" title=" @lang('common.btn_diff')">tonality</i>
                                 </a>
                             @endif

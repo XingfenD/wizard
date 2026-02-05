@@ -408,13 +408,13 @@ class DocumentController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      *
      * @return array|mixed|string
      */
-    public function getPageJSON(Request $request, $id, $page_id)
+    public function getPageJSON(Request $request, $id, $page_external_id)
     {
-        $pageItem = Document::where('id', $page_id)->where('project_id', $id)->firstOrFail();
+        $pageItem = Document::where('external_id', $page_external_id)->where('project_id', $id)->firstOrFail();
 
         $onlyBody = $request->input('only_body', 0);
         if ($onlyBody) {
