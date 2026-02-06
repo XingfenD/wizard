@@ -159,13 +159,15 @@ docker run -d --name my-wizard -p 8080:80  my-wizard
 
 ### 方法三
 
-由于项目已经十分古老，项目依赖、项目环境配置难度都比项目开发初难以高很多
+由于项目已经十分古老，项目依赖下载、项目环境配置难度都比项目开发时高很多。
 
-经过Fendy<xingfen.fendy@outlook.com>修改部分 Dockerfile 后，项目可以在如下系统上正常运行：
+经过Fendy \<xingfen.fendy@outlook.com\> 修改部分 Dockerfile 后，项目可以在如下系统上成功构建 docker 镜像并正常运行：
 
-- MacOS on Apple Silicon
+- [x] MacOS on Apple Silicon
+- [ ] Windows
+- [ ] Linux amd64
 
-运行如下命令即可无痛启动项目
+运行如下命令即可无痛启动项目。
 
 ```bash
 docker-compose up -d
