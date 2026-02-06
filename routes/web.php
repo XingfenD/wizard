@@ -59,7 +59,7 @@ Route::group(['middleware' => 'locale'], function () {
         // 文档比较
         Route::post('/doc/compare', 'CompareController@compare')->name('doc:compare');
         // 阅读模式
-        Route::get('/project/{id}/doc/{page_id}/read', 'DocumentController@readMode')->name('project:doc:read');
+        Route::get('/project/{id}/doc/{page_external_id}/read', 'DocumentController@readMode')->name('project:doc:read');
 
         // 小工具
         Route::group(['prefix' => 'tools', 'as' => 'tools:'], function () {
@@ -84,8 +84,8 @@ Route::group(['middleware' => 'locale'], function () {
 
         Route::group(['prefix' => 'swagger', 'as' => 'swagger:'], function () {
             // 获取swagger文档内容
-            Route::get('/{id}/doc/{page_id}.yml', 'DocumentController@getSwagger')->name('doc:yml');
-            Route::get('/{id}/doc/{page_id}.json', 'DocumentController@getJson')->name('doc:json');
+            Route::get('/{id}/doc/{page_external_id}.yml', 'DocumentController@getSwagger')->name('doc:yml');
+            Route::get('/{id}/doc/{page_external_id}.json', 'DocumentController@getJson')->name('doc:json');
         });
 
         // 用户扮演
@@ -202,7 +202,7 @@ Route::group(['middleware' => 'locale'], function () {
                      ->name('doc:delete');
 
                 // 文档同步
-                Route::post('/{id}/doc/{page_id}/sync-from', 'DocumentController@syncFromRemote')
+                Route::post('/{id}/doc/{page_external_id}/sync-from', 'DocumentController@syncFromRemote')
                      ->name('doc:sync-from');
 
                 // 文档标记

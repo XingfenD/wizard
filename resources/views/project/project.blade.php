@@ -36,7 +36,7 @@
                 @endif
 
                 <li role="presentation" class="mr-2">
-                    <button type="button" data-href="{{ wzRoute('project:doc:read', ['id' => $project->id, 'page_id' => $pageItem->id ]) }}" data-toggle="tooltip" title="阅读模式" class="btn btn-primary bmd-btn-icon">
+                    <button type="button" data-href="{{ wzRoute('project:doc:read', ['id' => $project->id, 'page_id' => $pageItem->external_id ]) }}" data-toggle="tooltip" title="阅读模式" class="btn btn-primary bmd-btn-icon">
                         <span class="fa fa-laptop"></span>
                     </button>
                 </li>
@@ -83,7 +83,7 @@
                                 <a href="#" wz-form-submit data-form="#form-document-sync" data-confirm="执行文档同步后，您将成为最后修改人，确定要执行文档同步吗？" class="ml-2" title="同步文档">
                                     <i class="fa fa-refresh" data-toggle="tooltip" title="同步文档"></i>
                                     <form id="form-document-sync" method="post" style="display: none;"
-                                          action="{{ wzRoute('project:doc:sync-from', ['id' => $pageItem->project_id, 'page_id' => $pageItem->id]) }}">
+                                          action="{{ wzRoute('project:doc:sync-from', ['id' => $pageItem->project_id, 'page_id' => $pageItem->external_id]) }}">
                                         {{ csrf_field() }}
                                     </form>
                                 </a>

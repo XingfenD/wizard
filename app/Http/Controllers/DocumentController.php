@@ -15,6 +15,8 @@
  * Modifications:
  *  1. Use Document external id instead of page id
  *      a. for core document controller
+ *  2. Add error catch in syncFromRemote
+ *  3. Fix error argument passing to getSwaggerContent
  */
 
 namespace App\Http\Controllers;
@@ -449,13 +451,13 @@ class DocumentController extends Controller
      * 获取原生swagger文档
      *
      * @param $id
-     * @param $page_id
+     * @param $page_external_id
      *
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public function getSwagger($id, $page_id)
+    public function getSwagger(Request $request, $id, $page_external_id)
     {
-        $yaml = $this->getSwaggerContent($id, $page_id, null);
+        $yaml = $this->getSwaggerContent($request, $id, $page_external_id);
         if (isJson($yaml)) {
             $formatter = Formatter::make($yaml, Formatter::JSON);
             return response($formatter->toYaml());
@@ -468,13 +470,13 @@ class DocumentController extends Controller
      * 获取json格式的文档
      *
      * @param $id
-     * @param $page_id
+     * @param $page_external_id
      *
      * @return mixed
      */
-    public function getJson($id, $page_id)
+    public function getJson(Request $request, $id, $page_external_id)
     {
-        $yaml = $this->getSwaggerContent($id, $page_id);
+        $yaml = $this->getSwaggerContent($request, $id, $page_external_id);
         if (isJson($yaml)) {
             $jsonContent = $yaml;
         } else {
@@ -491,11 +493,11 @@ class DocumentController extends Controller
      *
      * @param Request $request
      * @param $id
-     * @param $page_id
+     * @param $page_external_id
      *
      * @return string
      */
-    private function getSwaggerContent(Request $request, $id, $page_id): string
+    private function getSwaggerContent(Request $request, $id, $page_external_id): string
     {
         /** @var Project $project */
         $project = Project::findOrFail($id);
@@ -505,9 +507,7 @@ class DocumentController extends Controller
             abort(403, '您没有访问该项目的权限');
         }
 
-        $page = Document::where('project_id', $id)
-                        ->where('id', $page_id)
-                        ->firstOrFail();
+        $page = Document::findByExternalID($id, $page_external_id);
         if ($page->type != Document::TYPE_SWAGGER) {
             abort(422, '该文档不是Swagger文档');
         }
@@ -519,11 +519,11 @@ class DocumentController extends Controller
      * 阅读模式
      *
      * @param $id
-     * @param $page_id
+     * @param $page_external_id
      *
      * @return mixed|string
      */
-    public function readMode($id, $page_id)
+    public function readMode($id, $page_external_id)
     {
         /** @var Project $project */
         $project = Project::query()->findOrFail($id);
@@ -532,7 +532,7 @@ class DocumentController extends Controller
             abort(403, '您没有访问该项目的权限');
         }
 
-        $page = Document::where('project_id', $id)->where('id', $page_id)->firstOrFail();
+        $page = Document::findByExternalID($id, $page_external_id);
         $type = $this->types[$page->type];
 
         return view('share-show', [
@@ -549,52 +549,50 @@ class DocumentController extends Controller
      * 用于从sync_url同步swagger文档
      *
      * @param $id
-     * @param $page_id
+     * @param $page_external_id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function syncFromRemote($id, $page_id)
+    public function syncFromRemote($id, $page_external_id)
     {
         /** @var Document $pageItem */
-        $pageItem = Document::where('id', $page_id)
-                            ->where('project_id', $id)
-                            ->firstOrFail();
+        $pageItem = Document::findByExternalID($id, $page_external_id);
 
         $this->authorize('page-edit', $pageItem);
 
         $synced = false;
         if (!empty($pageItem->sync_url)) {
-            $client = new \GuzzleHttp\Client();
-            $resp = $client->get($pageItem->sync_url);
-            $respCode = $resp->getStatusCode();
-            $respBody = $resp->getBody()->getContents();
+            try {
+                $client = new \GuzzleHttp\Client();
+                $resp = $client->get($pageItem->sync_url);
+                $respCode = $resp->getStatusCode();
+                $respBody = $resp->getBody()->getContents();
 
-            if ($respCode !== 200) {
-                \Log::error('document_sync_failed', [
-                    'status_code' => $respCode,
-                    'resp_body'   => $respBody,
-                    'project_id'  => $id,
-                    'page_id'     => $page_id,
-                    'operator_id' => \Auth::user()->id,
-                ]);
-                throw new \Exception('文档同步失败');
-            }
+                if ($respCode !== 200) {
+                    $this->alertError('文档同步失败：远程服务器返回非200状态码');
+                    return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_external_id]));
+                }
 
-            $pageItem->content = $respBody;
+                // 只有文档内容发生修改才进行保存
+                if ($pageItem->isDirty()) {
+                    $pageItem->last_modified_uid = \Auth::user()->id;
+                    $pageItem->last_sync_at = Carbon::now();
 
-            // 只有文档内容发生修改才进行保存
-            if ($pageItem->isDirty()) {
-                $pageItem->last_modified_uid = \Auth::user()->id;
-                $pageItem->last_sync_at = Carbon::now();
+                    $pageItem->save();
 
-                $pageItem->save();
+                    // 记录文档变更历史
+                    DocumentHistory::write($pageItem);
 
-                // 记录文档变更历史
-                DocumentHistory::write($pageItem);
+                    event(new DocumentModified($pageItem));
 
-                event(new DocumentModified($pageItem));
-
-                $synced = true;
+                    $synced = true;
+                }
+            } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+                $this->alertError('文档同步失败：无法连接到远程服务器，请检查同步地址是否正确');
+                return redirect(wzRoute('project:home', ['id' => $id, 'p' => $pageItem->external_id]));
+            } catch (\Exception $e) {
+                $this->alertError('文档同步失败：发生未知错误');
+                return redirect(wzRoute('project:home', ['id' => $id, 'p' => $pageItem->external_id]));
             }
         }
 
@@ -604,7 +602,7 @@ class DocumentController extends Controller
             $this->alertSuccess('文档同步完成，没有新的内容');
         }
 
-        return redirect(wzRoute('project:home', ['id' => $id, 'p' => $page_id]));
+        return redirect(wzRoute('project:home', ['id' => $id, 'p' => $pageItem->external_id]));
     }
 
     /**

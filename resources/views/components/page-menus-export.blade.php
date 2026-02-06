@@ -28,13 +28,13 @@
 
                 @if($pageItem->type == \App\Repositories\Document::TYPE_SWAGGER)
                 <a href="#" class="dropdown-item wz-export-swagger"
-                   data-data-url="{!! wzRoute('swagger:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id, 'ts' => microtime(true)])  !!}"
+                   data-data-url="{!! wzRoute('swagger:doc:json', ['id' => $project->id, 'page_external_id' => $pageItem->external_id, 'ts' => microtime(true)])  !!}"
                    data-download-url="{!! wzRoute('export:download', ['filename' => "{$pageItem->title}.json"]) !!}">
                     <span class="fa fa-download mr-2"></span>
                     JSON
                 </a>
                 <a href="#" class="dropdown-item wz-export-swagger"
-                   data-data-url="{!! wzRoute('swagger:doc:yml', ['id' => $project->id, 'page_id' => $pageItem->id, 'ts' => microtime(true)])  !!}"
+                   data-data-url="{!! wzRoute('swagger:doc:yml', ['id' => $project->id, 'page_external_id' => $pageItem->external_id, 'ts' => microtime(true)])  !!}"
                    data-download-url="{!! wzRoute('export:download', ['filename' => "{$pageItem->title}.yml"]) !!}">
                     <span class="fa fa-download mr-2"></span>
                     YAML
@@ -92,7 +92,7 @@
                     contentBody.find('textarea').remove();
 
                     $.wz.dynamicFormSubmit(
-                        'generate-pdf-{{ $pageItem->id }}',
+                        'generate-pdf-{{ $pageItem->external_id }}',
                         'POST',
                         '{{ wzRoute('export:pdf', ['type' => documentType($pageItem->type)]) }}',
                         {
