@@ -52,6 +52,8 @@ docker-compose up -d
 - **System Setting**: Admin can manage system settings directly from the web interface.
 - **Fine-grained permission management**: A permission management system that allows strict but flexible access controls to different resources and actions.
 - **Hash the exposure of ids**: Hash the entity ids to prevent direct exposure in URLs (e.g., document IDs).
+- **More features for table type**: Export, diff and so on.
+- **Https support**: Host the service by https protocal with docker
 
 ### Ongoing Work
 
