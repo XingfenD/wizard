@@ -36,7 +36,7 @@
                 @endif
 
                 <li role="presentation" class="mr-2">
-                    <button type="button" data-href="{{ wzRoute('project:doc:read', ['id' => $project->id, 'page_id' => $pageItem->external_id ]) }}" data-toggle="tooltip" title="阅读模式" class="btn btn-primary bmd-btn-icon">
+                    <button type="button" data-href="{{ wzRoute('project:doc:read', ['id' => $project->id, 'page_external_id' => $pageItem->external_id ]) }}" data-toggle="tooltip" title="阅读模式" class="btn btn-primary bmd-btn-icon">
                         <span class="fa fa-laptop"></span>
                     </button>
                 </li>
@@ -56,7 +56,7 @@
                         {{ $pageItem->title }}
                     @endif
                     @if($type == 'swagger')
-                        <a title="原始Swagger文档" target="_blank" href="{{ wzRoute('swagger:doc:json', ['id' => $project->id, 'page_id' => $pageItem->id]) }}" class="fa fa-link"></a>
+                        <a title="原始Swagger文档" target="_blank" href="{{ wzRoute('swagger:doc:json', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}" class="fa fa-link"></a>
                     @endif
                 </h1>
             </nav>
@@ -258,7 +258,7 @@
             e.preventDefault();
             $.wz.request(
                 'post',
-                '{!! wzRoute('project:doc:score', ['id' => $project->id, 'page_id' => $pageItem->id]) !!}',
+                '{!! wzRoute('project:doc:score', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) !!}',
                 {score_type: $(this).data('type')},
                 function(data) {
                     window.location.reload(true);

@@ -109,7 +109,7 @@
             e.preventDefault();
 
             $.wz.dynamicFormSubmit(
-                'generate-markdown-{{ $pageItem->id }}',
+                'generate-markdown-{{ $pageItem->external_id }}',
                 'POST',
                 '{{ wzRoute('export:download', ['filename' => "{$pageItem->title}.md"]) }}',
                 {
@@ -128,7 +128,7 @@
 
             $.get(data_url, {}, function (data) {
                 $.wz.dynamicFormSubmit(
-                    'generate-swagger-{{ $pageItem->id }}',
+                    'generate-swagger-{{ $pageItem->external_id }}',
                     'POST',
                     download_url,
                     {

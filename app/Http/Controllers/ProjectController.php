@@ -569,9 +569,9 @@ class ProjectController extends Controller
         }
 
         $exclude = [];
-        $excludePageID = $request->input('exclude_page_id');
-        if (!empty($excludePageID)) {
-            $exclude[] = $excludePageID;
+        $excludePageExternalID = $request->input('exclude_page_external_id');
+        if (!empty($excludePageExternalID)) {
+            $exclude[] = $excludePageExternalID;
         }
 
         return view('project.document-selector',

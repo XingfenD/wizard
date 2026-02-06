@@ -26,22 +26,22 @@
                     @lang('common.btn_share')
                 </a>
 
-                <a href="#" wz-form-submit data-form="#form-outdated-{{ $pageItem->id }}"
+                <a href="#" wz-form-submit data-form="#form-outdated-{{ $pageItem->external_id }}"
                    data-confirm="确定要将文档标记为 {{ $pageItem->status == \App\Repositories\Document::STATUS_NORMAL ? '已过时' : '正常' }}" class="dropdown-item">
                     <span class="fa fa-outdent mr-2"></span>
                     {{ $pageItem->status == \App\Repositories\Document::STATUS_NORMAL ? '标记' : '取消' }}<del style="font-style: oblique">已过时</del>
-                    <form id="form-outdated-{{ $pageItem->id }}" method="post"
+                    <form id="form-outdated-{{ $pageItem->external_id }}" method="post"
                           action="{{ wzRoute('project:doc:mark-status', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}">
                         {{ method_field('PUT') }}{{ csrf_field() }}
                         <input type="hidden" name="status" value="{{ $pageItem->status == \App\Repositories\Document::STATUS_NORMAL ? \App\Repositories\Document::STATUS_OUTDATED : \App\Repositories\Document::STATUS_NORMAL }}">
                     </form>
                 </a>
 
-                <a href="#" wz-form-submit data-form="#form-{{ $pageItem->id }}"
+                <a href="#" wz-form-submit data-form="#form-{{ $pageItem->external_id }}"
                    data-confirm="@lang('document.delete_confirm', ['title' => $pageItem->title])" class="dropdown-item">
                     <span class="fa fa-trash mr-2"></span>
                     @lang('common.btn_delete')
-                    <form id="form-{{ $pageItem->id }}" method="post"
+                    <form id="form-{{ $pageItem->external_id }}" method="post"
                           action="{{ wzRoute('project:doc:delete', ['id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}">
                         {{ method_field('DELETE') }}{{ csrf_field() }}
                     </form>
@@ -68,8 +68,8 @@
                         </div>
 
                         <div class="form-group wz-document-form-select">
-                            <label for="wz-target-page_id" class="bmd-label-static">目录</label>
-                            <select class="form-control" name="target_page_id" id="wz-target-page_id"></select>
+                            <label for="wz-target-page_external_id" class="bmd-label-static">目录</label>
+                            <select class="form-control" name="target_page_external_id" id="wz-target-page_external_id"></select>
                         </div>
 
                         <button class="btn btn-raised btn-info" wz-move-confirm>确定</button>
@@ -110,15 +110,15 @@
             });
 
             $('#wz-target-project_id').on('change', function () {
-                $('#wz-target-page_id').html('');
+                $('#wz-target-page_external_id').html('');
 
                 var project_id = $('#wz-target-project_id').val();
                 if (project_id === '' || project_id === '0') {
                     return;
                 }
 
-                $.wz.request('get', '/project/' + project_id + "/doc-selector", {exclude_page_id: {{ $pageItem->id }} }, function (data) {
-                    $('#wz-target-page_id').html(data);
+                $.wz.request('get', '/project/' + project_id + "/doc-selector", {exclude_page_id: "{{ $pageItem->external_id }}"}, function (data) {
+                    $('#wz-target-page_external_id').html(data);
                 }, null, 'html');
             });
 
@@ -126,7 +126,7 @@
                 e.preventDefault();
 
                 var targetProjectId = $('#wz-target-project_id').val();
-                var targetPageId = $('#wz-target-page_id').val();
+                var targetPageExternalId = $('#wz-target-page_external_id').val();
 
                 if (targetProjectId === '' || targetProjectId === '0') {
                     return;
@@ -134,13 +134,14 @@
 
                 layer.load(3, 3000);
 
+                console.log(targetPageExternalId);
                 $.wz.dynamicFormSubmit(
                     'move-document-{{ $project->id }}',
                     'POST',
-                    '{{ wzRoute('project:move', ['project_id' => $project->id, 'page_id' => $pageItem->id]) }}',
+                    '{{ wzRoute('project:move', ['project_id' => $project->id, 'page_external_id' => $pageItem->external_id]) }}',
                     {
                         target_project_id: targetProjectId,
-                        target_page_id: targetPageId,
+                        target_page_external_id: targetPageExternalId,
                     }
                 )
             });

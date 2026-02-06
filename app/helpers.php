@@ -107,15 +107,16 @@ function navigator(
         }
 
         $navigators[$page->id] = [
-            'id' => (int) $page->id,
-            'name' => $page->title,
-            'pid' => (int) $page->pid,
-            'url' => wzRoute('project:home', ['id' => $projectID, 'p' => $page->external_id]),
-            'selected' => $pageExternalID === (string) $page->external_id,
-            'type' => documentType($page->type),
-            'status' => $page->status,
-            'created_at' => $page->created_at,
-            'sort_level' => $page->sort_level ?? 1000,
+            'id'            => (int) $page->id,
+            'external_id'   => $page->external_id,
+            'name'          => $page->title,
+            'pid'           => (int) $page->pid,
+            'url'           => wzRoute('project:home', ['id' => $projectID, 'p' => $page->external_id]),
+            'selected'      => $pageExternalID === (string) $page->external_id,
+            'type'          => documentType($page->type),
+            'status'        => $page->status,
+            'created_at'    => $page->created_at,
+            'sort_level'    => $page->sort_level ?? 1000,
         ];
     }
 

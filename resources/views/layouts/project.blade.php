@@ -92,7 +92,7 @@
                                 <label for="form-pid" class="bmd-label-floating">上级页面</label>
                                 <select class="form-control" name="page_id" id="form-pid">
                                     <option value="0">@lang('document.no_parent_page')</option>
-                                    @include('components.doc-options', ['navbars' => navigator($project->id, $pageItem->id ?? 0), 'level' => 0])
+                                    @include('components.doc-options', ['navbars' => navigator($project->id, $pageItem->external_id ?? 0), 'level' => 0])
                                 </select>
                             </div>
                             <div class="form-group">

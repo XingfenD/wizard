@@ -97,6 +97,7 @@ class DocumentController extends Controller
         $this->authorize('page-edit', $pageItem);
 
         $type = $this->types[$pageItem->type];
+        // BUG
         return view("doc.{$type}", [
             'pageItem'  => $pageItem,
             'project'   => $pageItem->project,
@@ -344,12 +345,12 @@ class DocumentController extends Controller
      *
      * @param Request $request
      * @param         $id
-     * @param         $page_id
+     * @param         $page_external_id
      *
      * @return array
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function checkPageExpired(Request $request, $id, $page_id)
+    public function checkPageExpired(Request $request, $id, $page_external_id)
     {
         $this->validate(
             $request,
@@ -361,7 +362,7 @@ class DocumentController extends Controller
         $lastModifiedAt = Carbon::parse($request->input('l'));
 
         /** @var Document $pageItem */
-        $pageItem = Document::where('id', $page_id)->firstOrFail();
+        $pageItem = Document::findByExternalID($id, $page_external_id);
 
         // 检查文档是否已经被别人修改过了，避免修改覆盖
         if (!$pageItem->updated_at->equalTo($lastModifiedAt)) {
@@ -610,29 +611,28 @@ class DocumentController extends Controller
      *
      * @param Request $request
      * @param $project_id
-     * @param $page_id
+     * @param $page_external_id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function move(Request $request, $project_id, $page_id)
+    public function move(Request $request, $project_id, $page_external_id)
     {
         $this->validate(
             $request,
             [
-                'target_project_id' => 'required|integer',
-                'target_page_id'    => 'integer',
+                'target_project_id'         => 'required|integer',
+                'target_page_external_id'   => 'string',
             ]
         );
 
-
         /** @var Document $pageItem */
-        $pageItem = Document::where('id', $page_id)->firstOrFail();
+        $pageItem = Document::findByExternalID($project_id, $page_external_id);
         $this->authorize('page-edit', $pageItem);
 
         // 检查目标项目权限
         $targetProjectId = $request->input('target_project_id', 0);
-        $targetPageId = $request->input('target_page_id', 0);
+        $targetPageExternalId = $request->input('target_page_external_id', '0');
 
         /** @var Project $targetProject */
         $targetProject = Project::where('id', $targetProjectId)->firstOrFail();
@@ -640,14 +640,15 @@ class DocumentController extends Controller
 
         // 检查目标页面是否存在
         $targetPage = null;
-        if (!empty($targetPageId)) {
+        if (!empty($targetPageExternalId)) {
             /** @var Document $targetPage */
-            $targetPage = $targetProject->pages()->where('id', $targetPageId)->firstOrFail();
+            $targetPage = $targetProject->pages()->where('external_id', $targetPageExternalId)->firstOrFail();
         }
+        \Log::debug('after'.$targetPage->external_id);
 
         $navigators = navigatorSort(navigator($project_id, 0));
         $navigators = $this->filterNavigators($navigators, function (array $nav) use ($pageItem) {
-            return (int)$nav['id'] === (int)$pageItem->id;
+            return (int)$nav['id'] === (int)$pageItem->external_id;
         });
 
         DB::transaction(function () use ($pageItem, $targetProject, $targetPage, $navigators) {
@@ -682,7 +683,7 @@ class DocumentController extends Controller
 
         return redirect(wzRoute(
             'project:home',
-            ['id' => $targetProject->id, 'p' => $targetPage->id ?? null]
+            ['id' => $targetProject->id, 'p' => $targetPage->external_id ?? null]
         ));
     }
 
@@ -691,11 +692,11 @@ class DocumentController extends Controller
      *
      * @param Request $request
      * @param $id
-     * @param $page_id
+     * @param $external_id
      * @return array
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function updateDocumentScore(Request $request, $id, $page_id)
+    public function updateDocumentScore(Request $request, $id, $external_id)
     {
         $this->validate($request, [
             'score_type' => 'required|in:1,2,3',
@@ -707,7 +708,7 @@ class DocumentController extends Controller
         }
 
         /** @var Document $pageItem */
-        $pageItem = Document::where('id', $page_id)->where('project_id', $id)->firstOrFail();
+        $pageItem = Document::findByExternalID($id, $external_id);
         $scoreType = (int)$request->input('score_type');
 
         /** @var DocumentScore $existedScore */

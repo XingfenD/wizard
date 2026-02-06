@@ -225,9 +225,9 @@ Route::group(['middleware' => 'locale'], function () {
                      ->name('doc:attachment:upload');
 
                 // ajax获取文档是否过期
-                Route::get('/{id}/doc/{page_id}/expired', 'DocumentController@checkPageExpired')->name('doc:expired');
+                Route::get('/{id}/doc/{page_external_id}/expired', 'DocumentController@checkPageExpired')->name('doc:expired');
                 // 文档评价
-                Route::post('/{id}/doc/{page_id}/score', 'DocumentController@updateDocumentScore')->name('doc:score');
+                Route::post('/{id}/doc/{page_external_id}/score', 'DocumentController@updateDocumentScore')->name('doc:score');
 
                 // 文档历史记录
                 Route::get('/{id}/doc/{page_external_id}/histories', 'HistoryController@pages')
@@ -241,7 +241,7 @@ Route::group(['middleware' => 'locale'], function () {
                 Route::post('/{id}/favorite', 'ProjectController@favorite')->name('favorite');
 
                 // 跨项目移动文档
-                Route::post('/{project_id}/doc/{page_id}/move-to', 'DocumentController@move')->name('move');
+                Route::post('/{project_id}/doc/{page_external_id}/move-to', 'DocumentController@move')->name('move');
                 Route::get('/{project_id}/doc-selector', 'ProjectController@documentSelector')->name('doc-selector');
             });
 

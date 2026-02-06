@@ -88,7 +88,7 @@
             }, null, 'html');
         };
 
-        初次加载最近操作日志
+        // 初次加载最近操作日志
         getRecentlyLogs(0);
 
         $('.wz-load-more').click(function(e) {
