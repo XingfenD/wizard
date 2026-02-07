@@ -513,6 +513,7 @@ class ProjectController extends Controller
 
         $redirectURL = $request->input('redirect');
         if (!empty($redirectURL)) {
+            $redirectURL = urldecode($redirectURL);
             return redirect($redirectURL);
         }
 
