@@ -19,6 +19,7 @@
  *  3. Fix error argument passing to getSwaggerContent
  *  4. Fix Issue#165 (original project) in Commit a7800a2a:
  *      Attachments lost when moving page
+ *  5. Name the document defaultly when creating
  */
 
 namespace App\Http\Controllers;
@@ -128,15 +129,15 @@ class DocumentController extends Controller
             $request,
             [
                 'project_id' => "required|integer|min:1|in:{$id}|project_exist",
-                'title'      => 'required|between:1,255',
+                'title'      => 'string|nullable',
                 'type'       => 'required|in:markdown,swagger,table',
                 'pid'        => 'integer|min:0',
                 'sort_level' => 'integer',
                 'sync_url'   => 'nullable|url',
             ],
             [
-                'title.required' => __('document.validation.title_required'),
-                'title.between'  => __('document.validation.title_between'),
+                // 'title.required' => __('document.validation.title_required'),
+                // 'title.between'  => __('document.validation.title_between'),
                 'sync_url.url'   => '文档同步地址必须为合法的URL地址',
             ]
         );
@@ -145,11 +146,15 @@ class DocumentController extends Controller
 
         $pid = $request->input('pid', 0);
         $projectID = $request->input('project_id');
-        $title = $request->input('title');
+        $title = $request->input('title', "未命名文档");
         $content = $request->input('content');
         $type = $request->input('type', 'markdown');
         $sortLevel = $request->input('sort_level', 1000);
         $syncUrl = $request->input('sync_url');
+
+        if (empty($title)) {
+            $title = "未命名文档";
+        }
 
         // 类型如果是表格，则需要检验表格内容是否合法
         if ($type === 'table') {

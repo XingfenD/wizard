@@ -52,11 +52,45 @@ form {
     box-sizing: initial;
 }
 
+.wz-top-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: white;
+}
+
+.wz-left-main {
+    height: calc(100vh - 130px);
+    overflow-y: auto;
+    position: relative;
+}
+
+@media screen and (min-width: 992px) {
+    .wz-body {
+        padding-top: 56px;
+    }
+    .wz-left-main {
+        position: fixed;
+        width: calc(25% - 15px);
+        z-index: 10;
+    }
+
+    .wz-panel-right {
+        margin-left: 25%;
+        width: 75%;
+    }
+}
+
 .wz-left-main-full {
     display: none;
 }
 
 @media screen and (max-width: 992px) {
+    .wz-body {
+        padding-top: 56px;
+    }
     .wz-left-main {
         display: none;
     }
@@ -105,6 +139,12 @@ form {
     .wz-top-navbar {
         flex-direction: inherit!important;
         padding: 0 10px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: white;
     }
     .wz-top-navbar .wz-top-nav-item {
         padding: 5px 0;
@@ -120,6 +160,10 @@ form {
     .wz-login-btn {
         width: 100%;
         margin-top: 5px;
+    }
+
+    .wz-body {
+        padding-top: 50px;
     }
 }
 
