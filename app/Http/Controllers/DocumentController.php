@@ -17,6 +17,8 @@
  *      a. for core document controller
  *  2. Add error catch in syncFromRemote
  *  3. Fix error argument passing to getSwaggerContent
+ *  4. Fix Issue#165 (original project) in Commit a7800a2a:
+ *      Attachments lost when moving page
  */
 
 namespace App\Http\Controllers;

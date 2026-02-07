@@ -14,7 +14,8 @@
  *
  * Modifications:
  *  1. Add snowflake algorithm to generate and parse external id
- *  2. Add debug log function to print debug message to debugbar
+ *  2. Add external_id to navigators element
+ *  3. Fix some warnings raised by my editor
  */
 
 use App\Repositories\Catalog;
@@ -1167,11 +1168,4 @@ function parseSnowflake(int $id): array
         'sequence' => $sequence,
         'datetime' => date('Y-m-d H:i:s', $timestamp / 1000)
     ];
-}
-
-function debugLog(string $message)
-{
-    if (class_exists('\Barryvdh\Debugbar\Facades\Debugbar')) {
-        Debugbar::debug($message);
-    }
 }

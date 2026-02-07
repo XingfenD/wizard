@@ -14,6 +14,8 @@
  *
  * Modifications:
  *  1. Use page external id instead of page id
+ *  2. Fix Issue#181 (original project) in Commit fede3135:
+ *      urldecode in groupPrivilegeRevoke before return
  */
 
 namespace App\Http\Controllers;

@@ -15,6 +15,8 @@
  * Modifications:
  *  1. Use page external id instead of page id
  *     for every single route with arg 'page_id'
+ *  2. Fix Issue#115 (original project) in Commit 59e746dd:
+ *        Guests can see mind_mapping in read_only mode now without log_in
  */
 
 /*

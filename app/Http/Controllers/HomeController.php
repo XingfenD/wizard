@@ -2,8 +2,19 @@
 /**
  * Wizard
  *
- * @link      https://aicode.cc/
- * @copyright 管宜尧 <mylxsw@aicode.cc>
+ * Original Code Copyright
+ * @license     Apache2.0
+ * @link        https://aicode.cc/
+ * @copyright   管宜尧 <mylxsw@aicode.cc>
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. Fix Issue#98 (original project) in Commit 1f40e300:
+ *      Accessible projects through user_group display normally now
  */
 
 namespace App\Http\Controllers;

@@ -1,4 +1,21 @@
 <?php
+/**
+ * Wizard
+ *
+ * Original Code Copyright
+ * @license     Apache2.0
+ * @link        https://aicode.cc/
+ * @copyright   管宜尧 <mylxsw@aicode.cc>
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. Fix Issue#115 (original project) in Commit 59e746dd:
+ *        Guests can see mind_mapping in read_only mode now without log_in
+ */
 
 namespace App\Http\Controllers;
 
