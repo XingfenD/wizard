@@ -70,7 +70,7 @@
             };
 
             $.global.getDraftKey = function () {
-                return 'markdown-editor-content-{{ $project->id ?? '' }}-{{ $pageItem->id ?? '' }}';
+                return 'markdown-editor-content-{{ $project->id ?? '' }}-{{ $pageItem->external_id ?? '' }}';
             };
 
             $.global.updateEditorContent = function (content) {

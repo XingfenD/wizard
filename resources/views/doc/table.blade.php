@@ -88,7 +88,7 @@
 
             // 获取swagger编辑器本次存储内容的key
             $.global.getDraftKey = function() {
-                return 'x-spreadsheet-content-{{ $project->id ?? '' }}-{{ $pageItem->id ?? '' }}';
+                return 'x-spreadsheet-content-{{ $project->id ?? '' }}-{{ $pageItem->external_id ?? '' }}';
             };
 
             // 更新编辑器内容
