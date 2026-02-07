@@ -102,7 +102,7 @@ function navigator(
     $navigators = [];
     /** @var Document $page */
     foreach ($pages as $page) {
-        if (in_array((int) $page->id, $exclude)) {
+        if (in_array((int) $page->external_id, $exclude)) {
             continue;
         }
 

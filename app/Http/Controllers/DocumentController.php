@@ -93,18 +93,18 @@ class DocumentController extends Controller
     {
         /** @var Document $pageItem */
         $pageItem = Document::where('project_id', $id)->where('external_id', $page_external_id)->firstOrFail();
-
+        $p_page_external_id = Document::externalIdFromID($id, $pageItem->pid);
         $this->authorize('page-edit', $pageItem);
 
         $type = $this->types[$pageItem->type];
-        // BUG
+
         return view("doc.{$type}", [
             'pageItem'  => $pageItem,
             'project'   => $pageItem->project,
             'newPage'   => false,
             'type'      => $type,
             'pid'       => $pageItem->pid,
-            'navigator' => navigator((int)$id, (int)$pageItem->pid, [$pageItem->id]),
+            'navigator' => navigator((int)$id, $p_page_external_id, [$page_external_id]),
         ]);
     }
 
