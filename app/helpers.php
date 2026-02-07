@@ -667,6 +667,7 @@ function convertSqlTo(string $sql, $callback)
 {
     try {
         $parser = new PHPSQLParser\PHPSQLParser();
+        // @phpstan-ignore-next-line PHP0406
         $parsed = $parser->parse($sql);
 
         if (!isset($parsed['CREATE'])) {
@@ -914,7 +915,7 @@ function markdownCompatibilityStrict($pageItem = null)
 
     return $pageItem->created_at->greaterThan(
         Carbon::createFromFormat(
-            Carbon::RFC3339,
+            DateTime::RFC3339,
             '2019-12-16T21:54:00+08:00'
         )
     );
@@ -1085,10 +1086,10 @@ function snowflake(int $type = 0, int $machineId = 1): int
 
     // 校验参数
     if ($machineId < 0 || $machineId > $maxMachineId) {
-        throw new \App\Exceptions\InvalidArgumentException("Machine ID must be between 0 and {$maxMachineId}");
+        throw new \InvalidArgumentException("Machine ID must be between 0 and {$maxMachineId}");
     }
     if ($type < 0 || $type > $maxType) {
-        throw new \App\Exceptions\InvalidArgumentException("Type must be between 0 and {$maxType}");
+        throw new \InvalidArgumentException("Type must be between 0 and {$maxType}");
     }
 
     // 获取当前时间戳（毫秒）
