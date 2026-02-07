@@ -59,9 +59,9 @@
                 <td>-</td>
                 <td>-</td>
             </tr>
-            @foreach($catalogs as $cat)
+            @foreach($catalogs as $idx => $cat)
                 <tr>
-                    <th scope="row">{{ $cat->id }}</th>
+                    <th scope="row">{{ $idx + 1 }}</th>
                     <td><a href="{{ wzRoute('home', ['catalog' => $cat->id]) }}">{{ $cat->name }}</a></td>
                     <td>{{ $cat->projects_count }}</td>
                     <td>{{ $cat->sort_level }}</td>

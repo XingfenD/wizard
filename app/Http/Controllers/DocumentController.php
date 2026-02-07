@@ -27,6 +27,7 @@ use App\Events\DocumentDeleted;
 use App\Events\DocumentMarkModified;
 use App\Events\DocumentModified;
 use App\Policies\ProjectPolicy;
+use App\Repositories\Attachment;
 use App\Repositories\Document;
 use App\Repositories\DocumentHistory;
 use App\Repositories\DocumentScore;
@@ -644,7 +645,6 @@ class DocumentController extends Controller
             /** @var Document $targetPage */
             $targetPage = $targetProject->pages()->where('external_id', $targetPageExternalId)->firstOrFail();
         }
-        \Log::debug('after'.$targetPage->external_id);
 
         $navigators = navigatorSort(navigator($project_id, 0));
         $navigators = $this->filterNavigators($navigators, function (array $nav) use ($pageItem) {
@@ -679,11 +679,16 @@ class DocumentController extends Controller
                     ]);
                 }
             );
+
+            // 修改附件的project_id
+            Attachment::where('page_id', $pageItem->id)->update([
+                'project_id' => $targetProject->id,
+            ]);
         });
 
         return redirect(wzRoute(
             'project:home',
-            ['id' => $targetProject->id, 'p' => $targetPage->external_id ?? null]
+            ['id' => $targetProject->id, 'p' => $page_external_id ?? null]
         ));
     }
 

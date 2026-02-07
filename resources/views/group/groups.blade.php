@@ -40,9 +40,9 @@
             </tr>
             </thead>
             <tbody>
-            @forelse($groups as $group)
+            @forelse($groups as $idx => $group)
                 <tr>
-                    <th scope="row">{{ $group->id }}</th>
+                    <th scope="row">{{ $idx + 1 }}</th>
                     <td><a href="{!! wzRoute('admin:groups:view', ['id' => $group->id]) !!}">{{ $group->name }}</a></td>
                     <td>{{ $group->users_count }}</td>
                     <td>{{ $group->projects_count }}</td>

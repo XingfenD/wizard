@@ -24,9 +24,9 @@
                 </thead>
                 <tbody>
 
-                @foreach($attachments as $attachment)
+                @foreach($attachments as $idx => $attachment)
                     <tr>
-                        <th scope="row">{{ $attachment->id }}</th>
+                        <th scope="row">{{ $idx + 1 }}</th>
                         <td>{{ $attachment->name }}</td>
                         <td>{{ $attachment->user->name }}</td>
                         <td>{{ $attachment->created_at }}</td>
