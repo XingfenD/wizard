@@ -16,17 +16,24 @@ class MindMappingController extends Controller
 {
     public function editor(Request $request)
     {
+        // TODO: priveledge check by project (new field `project` to database)
         $refId = $request->input('ref_id');
+        $user = Auth::user();
+        $widget = null;
+
         if (!empty($refId)) {
             /** @var Widget $widget */
             $widget = Widget::where('type', Widget::TYPE_MIND_MAPPING)->where('ref_id', $refId)->firstOrFail();
         }
 
+        // 如果用户未登录，强制只读模式
+        $readonly = empty($user) ? 1 : (int)$request->input('readonly', 1);
+
         return view(
             'mind-mapping.editor',
             [
                 'widget'   => $widget ?? null,
-                'readonly' => $request->input('readonly', 1),
+                'readonly' => $readonly,
             ]
         );
     }

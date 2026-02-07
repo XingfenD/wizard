@@ -133,15 +133,17 @@ Route::group(['middleware' => 'locale'], function () {
             Route::get('/', 'SearchController@search')->name('search');
         });
 
+        // 思维导图编辑器（允许未登录用户访问，只读模式）
+        Route::get('/mind-mapping/editor', 'MindMappingController@editor')->name('mind-mapping:editor');
+
         Route::group(['middleware' => 'auth'], function () {
             // 个人首页
             Route::get('/home', 'ProjectController@home')->name('user:home');
             // 文件上传
             Route::post('/upload', 'FileController@imageUpload')->name('upload');
 
-            // 思维导图
+            // 思维导图保存
             Route::group(['prefix' => 'mind-mapping', 'as' => 'mind-mapping:'], function () {
-                Route::get('/editor', 'MindMappingController@editor')->name('editor');
                 Route::post('/', 'MindMappingController@save')->name('save');
             });
 

@@ -86,7 +86,6 @@ class HomeController extends Controller
             $projects = $projectModel->orderBy('sort_level', 'ASC')->paginate($perPage);
         } else {
             $userGroups = empty($user) ? null : $user->groups->pluck('id')->toArray();
-            \Log::info('userGroups: '. count($userGroups) .' '. json_encode($userGroups));
             $projectModel->where(function ($query) use ($user, $userGroups) {
                 $query->where('visibility', Project::VISIBILITY_PUBLIC);
                 if (!empty($userGroups)) {
@@ -99,7 +98,6 @@ class HomeController extends Controller
                 }
             });
             $projectModel->orderBy('sort_level', 'ASC');
-            \Log::debug('projectModels sql: '. $projectModel->toSql());
 
             /** @var LengthAwarePaginator $projects */
             $projects = $projectModel->paginate($perPage);
