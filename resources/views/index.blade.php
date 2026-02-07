@@ -13,7 +13,7 @@
                 </div>
                 <div class="bmd-form-group bmd-collapse-inline pull-right" style="padding-top: 3px;">
                     <a class="badge badge-success badge-pill" href="{{ wzRoute('home', ['catalog' => $catalog_id]) }}" data-toggle="tooltip" title="点击此处刷新页面">#{{ $catalog->name }}</a>
-                </div> 
+                </div>
             </div>
         </div>
         @endif

@@ -86,20 +86,24 @@ class HomeController extends Controller
             $projects = $projectModel->orderBy('sort_level', 'ASC')->paginate($perPage);
         } else {
             $userGroups = empty($user) ? null : $user->groups->pluck('id')->toArray();
+            \Log::info('userGroups: '. count($userGroups) .' '. json_encode($userGroups));
             $projectModel->where(function ($query) use ($user, $userGroups) {
                 $query->where('visibility', Project::VISIBILITY_PUBLIC);
                 if (!empty($userGroups)) {
                     $query->orWhere(function ($query) use ($userGroups) {
                         $query->where('visibility', '!=', Project::VISIBILITY_PUBLIC)
                               ->whereHas('groups', function ($query) use ($userGroups) {
-                                  $query->where('wz_groups.id', $userGroups);
+                                  $query->whereIn('wz_groups.id', $userGroups);
                               });
                     })->orWhere('user_id', $user->id);
                 }
             });
+            $projectModel->orderBy('sort_level', 'ASC');
+            \Log::debug('projectModels sql: '. $projectModel->toSql());
 
             /** @var LengthAwarePaginator $projects */
-            $projects = $projectModel->orderBy('sort_level', 'ASC')->paginate($perPage);
+            $projects = $projectModel->paginate($perPage);
+            \Log::debug('projectModels '. json_encode($projects));
         }
 
         // 当前用户关注的项目

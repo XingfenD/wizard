@@ -13,7 +13,7 @@
                     {{ csrf_field() }}
                     <div class="form-group">
                         <label for="project-name" class="bmd-label-floating">@lang('project.project_name')：</label>
-                        <input type="text" name="name" placeholder="@lang('project.project_name')" class="form-control" id="project-name">
+                        <input type="text" name="name" class="form-control" id="project-name">
                     </div>
                     <div class="form-group">
                         <label for="catalog-status" class="bmd-label-floating">目录</label>
@@ -26,7 +26,7 @@
                     </div>
                     <div class="form-group">
                         <label for="project-description" class="bmd-label-floating">@lang('project.description')：</label>
-                        <textarea class="form-control" name="description" placeholder="@lang('project.description')" id="project-description"></textarea>
+                        <textarea class="form-control" name="description" id="project-description"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="project-visibility" class="bmd-label-floating">@lang('project.privilege')：</label>
