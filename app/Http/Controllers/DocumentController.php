@@ -64,7 +64,10 @@ class DocumentController extends Controller
     {
         $this->validate(
             $request,
-            ['type' => 'in:swagger,markdown,table', 'pid' => 'integer|min:0']
+            [
+                'type'                  => 'in:swagger,markdown,table',
+                'p_page_external_id'    => 'string|min:0',
+            ]
         );
 
         /** @var Project $project */
@@ -73,15 +76,14 @@ class DocumentController extends Controller
         $this->authorize('page-add', $project);
 
         $type = $request->input('type', 'markdown');
-        $pid = $request->input('pid', 0);
-
-        // BUG?: p_external_id instead of pid
+        $p_page_external_id = $request->input('p_page_external_id', 0);
+        // BUG?: p_page_external_id instead of pid
         return view("doc.{$type}", [
-            'newPage'   => true,
-            'project'   => $project,
-            'type'      => $type,
-            'pid'       => $pid,
-            'navigator' => navigator((int)$id, $pid),
+            'newPage'               => true,
+            'project'               => $project,
+            'type'                  => $type,
+            'p_page_external_id'    => $p_page_external_id,
+            'navigator'             => navigator((int)$id, $p_page_external_id),
         ]);
     }
 
@@ -133,12 +135,12 @@ class DocumentController extends Controller
         $this->validate(
             $request,
             [
-                'project_id' => "required|integer|min:1|in:{$id}|project_exist",
-                'title'      => 'required|between:1,255',
-                'type'       => 'required|in:markdown,swagger,table',
-                'pid'        => 'integer|min:0',
-                'sort_level' => 'integer',
-                'sync_url'   => 'nullable|url',
+                'project_id'            => "required|integer|min:1|in:{$id}|project_exist",
+                'title'                 => 'required|between:1,255',
+                'type'                  => 'required|in:markdown,swagger,table',
+                'p_page_external_id'    => "required|string|min:1|page_exist_by_external_id:{$id}",
+                'sort_level'            => 'integer',
+                'sync_url'              => 'nullable|url',
             ],
             [
                 'title.required' => __('document.validation.title_required'),
@@ -149,7 +151,7 @@ class DocumentController extends Controller
 
         $this->authorize('page-add', $id);
 
-        $pid = $request->input('pid', 0);
+        $p_page_external_id = $request->input('p_page_external_id', '0');
         $projectID = $request->input('project_id');
         $title = $request->input('title');
         $content = $request->input('content');
@@ -170,6 +172,7 @@ class DocumentController extends Controller
         }
 
         $typeInt = array_flip($this->types)[$type];
+        $pid = Document::idFromExternalID($p_page_external_id);
 
         $pageItem = Document::create([
             'pid'               => $pid,
@@ -224,7 +227,7 @@ class DocumentController extends Controller
             [
                 'project_id'        => "required|integer|min:1|in:{$id}|project_exist",
                 'page_external_id'  => "required|string|in:{$page_external_id}|page_exist_by_external_id:{$id}",
-                'pid'               => "required|integer|min:0|page_exist:{$id},false",
+                'p_external_id'     => "required|string|page_exist_by_external_id:{$id},false",
                 'title'             => 'required|between:1,255',
                 'last_modified_at'  => 'required|date',
                 'force'             => 'bool',

@@ -58,7 +58,7 @@
         <div class="pull-left wz-document-form">
             <div class="form-group wz-document-form-select">
                 <label for="form-pid" class="bmd-label-static">上级页面</label>
-                <select class="form-control" name="pid" id="form-pid">
+                <select class="form-control" name="p_page_external_id" id="form-pid">
                     <option value="0">@lang('document.no_parent_page')</option>
                     @include('components.doc-options', ['navbars' => $navigator, 'level' => 0])
                 </select>
@@ -195,7 +195,7 @@
                             // layer.close(index);
                             // documentSaving = false;
                         }, function () {
-                            window.location.href = '{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => $type, 'pid' => $pid]) !!}';
+                            window.location.href = '{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => $type, 'p_page_external_id' => $p_page_external_id]) !!}';
                         });
                     }, function() {
                         setTimeout(function(){

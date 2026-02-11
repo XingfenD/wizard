@@ -22,13 +22,13 @@
                             <i class="material-icons" data-toggle="tooltip" title="创建文档">add_to_photos</i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-left" aria-labelledby="new-document" style="min-width: 13rem;">
-                            <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'pid' => $pageID]) !!}" class="dropdown-item">
+                            <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'p_page_external_id' => $pageItem == null ? '0' : $pageItem->external_id]) !!}" class="dropdown-item">
                                 <i class="fa fa-book mr-2"></i> 创建 @lang('common.markdown')
                             </a>
-                            <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'swagger', 'pid' => $pageID]) !!}" class="dropdown-item">
+                            <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'swagger', 'p_page_external_id' => $pageItem == null ? '' : $pageItem->external_id]) !!}" class="dropdown-item">
                                 <i class="fa fa-code mr-2"></i> 创建 @lang('common.swagger')
                             </a>
-                            <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'table', 'pid' => $pageID]) !!}" class="dropdown-item">
+                            <a href="{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => 'table', 'p_page_external_id' => $pageItem == null ? '' : $pageItem->external_id]) !!}" class="dropdown-item">
                                 <i class="fa fa-table mr-2"></i> 创建 表格
                             </a>
                             <a data-toggle="modal" data-target="#wz-document-import" class="dropdown-item">
