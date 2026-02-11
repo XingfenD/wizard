@@ -79,13 +79,15 @@ form {
         z-index: 10;
     }
 
-    .wz-panel-right {
+    .wz-panel-right,
+    .wz-left-main + div[class*="col-lg-"] {
         margin-left: 25%;
         width: 75%;
         float: right;
     }
 
-    .wz-left-main.hidden + .wz-panel-right {
+    .wz-left-main.hidden + .wz-panel-right,
+    .wz-left-main.hidden + div[class*="col-lg-"] {
         margin-left: 0;
         width: 100%;
     }
