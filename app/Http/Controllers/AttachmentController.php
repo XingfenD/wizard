@@ -152,7 +152,7 @@ class AttachmentController extends Controller
             'pageID'      => $page_id,
             'pageItem'    => $page,
             'extensions'  => $this->getSupportExtensions(),
-            'navigators'  => navigator($id, $page_id),
+            'navigators'  => navigator($id, $page_external_id),
             'isFavorited' => $project->isFavoriteByUser(\Auth::user()),
         ]);
     }

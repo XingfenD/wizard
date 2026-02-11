@@ -74,6 +74,8 @@ class DocumentController extends Controller
 
         $type = $request->input('type', 'markdown');
         $pid = $request->input('pid', 0);
+
+        // BUG?: p_external_id instead of pid
         return view("doc.{$type}", [
             'newPage'   => true,
             'project'   => $project,
@@ -97,6 +99,10 @@ class DocumentController extends Controller
         /** @var Document $pageItem */
         $pageItem = Document::where('project_id', $id)->where('external_id', $page_external_id)->firstOrFail();
         $p_page_external_id = Document::externalIdFromID($id, $pageItem->pid);
+        if ($pageItem->pid == null) {
+            $p_page_external_id = '0';
+        }
+
         $this->authorize('page-edit', $pageItem);
 
         $type = $this->types[$pageItem->type];
@@ -648,7 +654,7 @@ class DocumentController extends Controller
             $targetPage = $targetProject->pages()->where('external_id', $targetPageExternalId)->firstOrFail();
         }
 
-        $navigators = navigatorSort(navigator($project_id, 0));
+        $navigators = navigatorSort(navigator($project_id, '0'));
         $navigators = $this->filterNavigators($navigators, function (array $nav) use ($pageItem) {
             return (int)$nav['id'] === (int)$pageItem->external_id;
         });
