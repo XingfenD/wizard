@@ -128,6 +128,7 @@
                 e.preventDefault();
 
                 leftPanel.toggle();
+                leftPanel.toggleClass('hidden');
                 rightPanel.toggleClass('col-lg-9');
             });
         });

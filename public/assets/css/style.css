@@ -84,6 +84,11 @@ form {
         width: 75%;
         float: right;
     }
+
+    .wz-left-main.hidden + .wz-panel-right {
+        margin-left: 0;
+        width: 100%;
+    }
 }
 
 .wz-left-main-full {
