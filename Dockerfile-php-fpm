@@ -1,5 +1,5 @@
-# 使用PHP 7.4 Apache基础镜像
-FROM php:7.4-apache
+# 使用PHP 7.4 FPM基础镜像
+FROM php:7.4-fpm
 
 # 设置工作目录
 WORKDIR /var/www/html
@@ -29,9 +29,6 @@ RUN docker-php-ext-install \
     zip \
     ldap
 
-# 启用Apache重写模块
-RUN a2enmod rewrite headers
-
 # 安装Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -50,17 +47,8 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# 安装依赖
-RUN composer install --optimize-autoloader --no-dev
+# 暴露9000端口
+EXPOSE 9000
 
-# 生成应用密钥
-RUN php artisan key:generate
-
-# 创建存储链接
-RUN php artisan storage:link
-
-# 暴露80端口
-EXPOSE 80
-
-# 启动Apache服务
-CMD ["apache2-foreground"]
+# 启动PHP-FPM服务
+CMD ["php-fpm"]
