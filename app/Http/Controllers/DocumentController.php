@@ -100,9 +100,10 @@ class DocumentController extends Controller
     {
         /** @var Document $pageItem */
         $pageItem = Document::where('project_id', $id)->where('external_id', $page_external_id)->firstOrFail();
-        $p_page_external_id = Document::externalIdFromID($id, $pageItem->pid);
-        if ($pageItem->pid == null) {
+        if ($pageItem->pid == null || $pageItem->pid == 0) {
             $p_page_external_id = '0';
+        } else {
+            $p_page_external_id = Document::externalIdFromID($pageItem->pid);
         }
 
         $this->authorize('page-edit', $pageItem);
@@ -110,11 +111,11 @@ class DocumentController extends Controller
         $type = $this->types[$pageItem->type];
 
         return view("doc.{$type}", [
-            'pageItem'  => $pageItem,
-            'project'   => $pageItem->project,
-            'newPage'   => false,
-            'type'      => $type,
-            'pid'       => $pageItem->pid,
+            'pageItem'              => $pageItem,
+            'project'               => $pageItem->project,
+            'newPage'               => false,
+            'type'                  => $type,
+            'p_page_external_id'    => $p_page_external_id,
             'navigator' => navigator((int)$id, $p_page_external_id, [$page_external_id]),
         ]);
     }
@@ -136,15 +137,15 @@ class DocumentController extends Controller
             $request,
             [
                 'project_id'            => "required|integer|min:1|in:{$id}|project_exist",
-                'title'                 => 'required|between:1,255',
+                'title'                 => 'max:255',
                 'type'                  => 'required|in:markdown,swagger,table',
-                'p_page_external_id'    => "required|string|min:1|page_exist_by_external_id:{$id}",
+                'p_page_external_id'    => "string|min:1",
                 'sort_level'            => 'integer',
                 'sync_url'              => 'nullable|url',
             ],
             [
-                'title.required' => __('document.validation.title_required'),
-                'title.between'  => __('document.validation.title_between'),
+                // 'title.required' => __('document.validation.title_required'),
+                // 'title.between'  => __('document.validation.title_between'),
                 'sync_url.url'   => '文档同步地址必须为合法的URL地址',
             ]
         );
@@ -172,7 +173,11 @@ class DocumentController extends Controller
         }
 
         $typeInt = array_flip($this->types)[$type];
-        $pid = Document::idFromExternalID($p_page_external_id);
+        $pid = Document::idFromExternalID($p_page_external_id, false)? : 0;
+
+        if ($title === null || $title === '') {
+            $title = __('document.default_title');
+        }
 
         $pageItem = Document::create([
             'pid'               => $pid,
@@ -225,15 +230,15 @@ class DocumentController extends Controller
         $this->validate(
             $request,
             [
-                'project_id'        => "required|integer|min:1|in:{$id}|project_exist",
-                'page_external_id'  => "required|string|in:{$page_external_id}|page_exist_by_external_id:{$id}",
-                'p_external_id'     => "required|string|page_exist_by_external_id:{$id},false",
-                'title'             => 'required|between:1,255',
-                'last_modified_at'  => 'required|date',
-                'force'             => 'bool',
-                'history_id'        => 'required|integer',
-                'sort_level'        => 'integer',
-                'sync_url'          => 'nullable|url',
+                'project_id'            => "required|integer|min:1|in:{$id}|project_exist",
+                'page_external_id'      => "required|string|in:{$page_external_id}|page_exist_by_external_id:{$id}",
+                'p_page_external_id'    => "string|max:255",
+                'title'                 => 'required|between:1,255',
+                'last_modified_at'      => 'required|date',
+                'force'                 => 'bool',
+                'history_id'            => 'required|integer',
+                'sort_level'            => 'integer',
+                'sync_url'              => 'nullable|url',
             ],
             [
                 'title.required' => __('document.validation.title_required'),
@@ -242,7 +247,7 @@ class DocumentController extends Controller
             ]
         );
 
-        $pid = $request->input('pid', 0);
+        $p_page_external_id = $request->input('p_page_external_id', '0');
         $projectID = $request->input('project_id');
         $title = $request->input('title');
         $content = $request->input('content');
@@ -283,6 +288,8 @@ class DocumentController extends Controller
             ]);
         }
 
+        // 查询上级页面ID
+        $pid = Document::idFromExternalID($p_page_external_id, false);
         $pageItem->pid = $pid;
         $pageItem->project_id = $projectID;
         $pageItem->title = $title;
