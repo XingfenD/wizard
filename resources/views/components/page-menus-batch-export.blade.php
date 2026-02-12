@@ -17,8 +17,8 @@
             <div class="modal-body">
 
                 <div class="form-group wz-document-form-select">
-                    <label for="wz-export-pid" class="bmd-label-static">选择要导出的目录</label>
-                    <select class="form-control" name="pid" id="wz-export-pid">
+                    <label for="wz-export-p_page_external_id" class="bmd-label-static">选择要导出的目录</label>
+                    <select class="form-control" name="p_page_external_id" id="wz-export-p_page_external_id">
                         <option value="0">所有文件</option>
                         @include('components.doc-options', ['navbars' => navigator($project->id, '0'), 'level' => 0, 'excludeLeaf' => true])
                     </select>
@@ -45,7 +45,7 @@
                 e.preventDefault();
 
                 var type = $(this).data('type');
-                var pid = $('#wz-export-pid').val();
+                var p_page_external_id = $('#wz-export-p_page_external_id').val();
 
                 layer.load(3, {time: (type === 'raw' ? 3 : 6) * 1000});
 
@@ -55,7 +55,7 @@
                     '{{ wzRoute('export:batch', ['project_id' => $project->id]) }}',
                     {
                         type: type,
-                        pid: pid, // 指定pid可以只下载指定目录下的内容
+                        p_page_external_id: p_page_external_id, // 指定 p_page_external_id 可以只下载指定目录下的内容
                     }
                 )
             });

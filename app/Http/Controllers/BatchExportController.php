@@ -1,9 +1,20 @@
 <?php
 /**
- * wizard
+ * Wizard
  *
- * @link      https://www.yunsom.com/
- * @copyright 管宜尧 <guanyiyao@yunsom.com>
+ * Original Code Copyright
+ * @license     Apache2.0
+ * @link        https://aicode.cc/
+ * @copyright   管宜尧 <mylxsw@aicode.cc>
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. Use page external id instead of page id
+ *      a. for batch export
  */
 
 namespace App\Http\Controllers;
@@ -43,12 +54,12 @@ class BatchExportController extends Controller
         $this->validate(
             $request,
             [
-                'pid'  => 'integer',
-                'type' => 'required|in:pdf,raw'
+                'p_page_external_id'    => 'string',
+                'type'                  => 'required|in:pdf,raw'
             ]
         );
 
-        $pid = (int)$request->input('pid', 0);
+        $p_page_external_id = $request->input('p_page_external_id', '0');
         $type = $request->input('type');
 
         /** @var Project $project */
@@ -58,7 +69,8 @@ class BatchExportController extends Controller
         $documents = $project->pages;
         $navigators = navigatorSort(navigator($project_id, '0'), $project->catalog_sort_style);
 
-        if ($pid !== 0) {
+        if ($p_page_external_id !== '0') {
+            $pid = Document::idFromExternalID($p_page_external_id);
             $navigators = $this->filterNavigators($navigators, function (array $nav) use ($pid) {
                 return (int)$nav['id'] === $pid;
             });
