@@ -38,15 +38,17 @@
             <thead>
             <tr>
                 <th>#</th>
+                <th>@lang('project.group_id')</th>
                 <th>@lang('project.group_name')</th>
                 <th>@lang('project.group_write_enabled')</th>
                 <th>@lang('common.operation')</th>
             </tr>
             </thead>
             <tbody>
-            @foreach($addedGroups as $group)
+            @foreach($addedGroups as $idx => $group)
                 <tr>
-                    <th scope="row">{{ $group->id }}</th>
+                    <th scope="row">{{ $idx + 1 }}</th>
+                    <td>@if(Auth::user() && Auth::user()->isAdmin())<a href="/admin/groups/{{ $group->id }}">{{ $group->id }}</a>@else{{ $group->id }}@endif</td>
                     <td>{{ $group->name }}</td>
                     <td>{{ $group->projects[0]->pivot->privilege == 1 ? __('common.yes') : __('common.no') }}</td>
                     <td>

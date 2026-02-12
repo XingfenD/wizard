@@ -2,8 +2,18 @@
 /**
  * wizard
  *
+ * Original Code Copyright
  * @link      https://www.yunsom.com/
  * @copyright 管宜尧 <guanyiyao@yunsom.com>
+
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. Add `group_id`
  */
 
 return [
@@ -20,7 +30,8 @@ return [
     'project_delete'         => '删除项目',
     'sort'                   => '文档排序',
 
-    'group_name'          => '用户组',
+    'group_id'            => '用户组ID',
+    'group_name'          => '用户组名称',
     'group_write_enabled' => '允许修改',
     'group_added'         => '已允许的用户组',
 

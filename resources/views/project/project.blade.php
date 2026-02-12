@@ -197,9 +197,9 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($project->groups as $group)
+                        @foreach($project->groups as $idx => $group)
                             <tr>
-                                <th scope="row">{{ $group->id }}</th>
+                                <th scope="row">{{ $idx + 1 }}</th>
                                 <td>{{ $group->name }}</td>
                                 <td>{{ $group->projects[0]->pivot->privilege == 1 ? __('common.yes') : __('common.no') }}</td>
                             </tr>

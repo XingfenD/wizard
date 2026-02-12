@@ -60,9 +60,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @forelse($users as $user)
+                    @forelse($users as $idx => $user)
                         <tr>
-                            <th scope="row">{{ $user->id }}</th>
+                            <th scope="row">{{ $idx + 1 }}</th>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->created_at->format('Y-m-d H:i') }}</td>
@@ -140,9 +140,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @forelse($projects as $project)
+                    @forelse($projects as $idx => $project)
                         <tr>
-                            <th scope="row">{{ $project->id }}</th>
+                            <th scope="row">{{ $idx + 1 }}</th>
                             <td>
                                 <a href="{!! wzRoute('project:home', ['id' => $project->id]) !!}">{{ $project->name }}</a>
                                 @if(!empty($project->catalog_id))

@@ -43,9 +43,9 @@
             </tr>
             </thead>
             <tbody>
-            @forelse($users as $user)
+            @forelse($users as $idx => $user)
                 <tr class="{{ $user->id == Auth::user()->id ? 'info' : '' }}">
-                    <th scope="row">{{ $user->id }}</th>
+                    <th scope="row">{{ $idx + 1 }}</th>
                     <td>{{ $user->name }}</td>
                     <td>
                         <a href="{{ wzRoute('admin:user', ['id' => $user->id]) }}">{{ $user->email }}</a>
