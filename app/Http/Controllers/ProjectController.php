@@ -14,6 +14,8 @@
  *
  * Modifications:
  *  1. Use page external id instead of page id
+ *      a. for ProjectController
+ *      b. replace integer 0 with string '0' for navigators
  *  2. Fix Issue#181 (original project) in Commit fede3135:
  *      urldecode in groupPrivilegeRevoke before return
  */

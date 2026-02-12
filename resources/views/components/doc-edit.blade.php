@@ -56,8 +56,8 @@
         </div>
         <div class="pull-left wz-document-form">
             <div class="form-group wz-document-form-select">
-                <label for="form-pid" class="bmd-label-static">上级页面</label>
-                <select class="form-control" name="p_page_external_id" id="form-pid">
+                <label for="form-p_page_external_id" class="bmd-label-static">上级页面</label>
+                <select class="form-control" name="p_page_external_id" id="form-p_page_external_id">
                     <option value="0">@lang('document.no_parent_page')</option>
                     @include('components.doc-options', ['navbars' => $navigator, 'level' => 0])
                 </select>
@@ -283,7 +283,7 @@
 
                     $.wz.dialogOpen(layerId, '@lang('document.document_differ')', function (iframeId) {
                         $.wz.dynamicFormSubmit(
-                            'wz-compare-' + resp.data.id,
+                            'wz-compare-' + resp.data.external_id,
                             'post',
                             compareUrl,
                             {
@@ -291,8 +291,8 @@
                                 doc2: resp.data.content,
                                 doc1title: $('#editor-title').val(),
                                 doc2title: resp.data.title,
-                                doc1pid: $('#form-pid').val(),
-                                doc2pid: resp.data.pid,
+                                doc1p_page_external_id: $('#form-p_page_external_id').val(),
+                                doc2p_page_external_id: resp.data.p_page_external_id,
                                 noheader: 1
                             },
                             iframeId

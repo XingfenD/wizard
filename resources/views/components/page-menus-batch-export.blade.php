@@ -17,7 +17,7 @@
             <div class="modal-body">
 
                 <div class="form-group wz-document-form-select">
-                    <label for="form-pid" class="bmd-label-static">选择要导出的目录</label>
+                    <label for="wz-export-pid" class="bmd-label-static">选择要导出的目录</label>
                     <select class="form-control" name="pid" id="wz-export-pid">
                         <option value="0">所有文件</option>
                         @include('components.doc-options', ['navbars' => navigator($project->id, '0'), 'level' => 0, 'excludeLeaf' => true])

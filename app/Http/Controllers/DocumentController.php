@@ -20,6 +20,11 @@
  *  4. Fix Issue#165 (original project) in Commit a7800a2a:
  *      Attachments lost when moving page
  *  5. Name the document defaultly when creating
+ *  6. Use p_page_external_id instead of pid
+ *      a. for newPage and editPage
+ *  7. getPageJson will not expose id and pid now,
+ *      but return page_external_id and p_page_external_id instead
+ *      TODO: check other content format
  */
 
 namespace App\Http\Controllers;
@@ -456,19 +461,19 @@ class DocumentController extends Controller
         }
 
         return [
-            'id'                     => $pageItem->id,
-            'pid'                    => $pageItem->pid,
-            'title'                  => $pageItem->title,
-            'description'            => $pageItem->description,
-            'content'                => $pageItem->content,
-            'type'                   => $pageItem->type,
-            'user_id'                => $pageItem->user_id,
-            'username'               => $pageItem->user->name,
-            'sort_level'             => $pageItem->sort_level,
-            'last_modified_user_id'  => $pageItem->lastModifiedUser->id,
-            'last_modified_username' => $pageItem->lastModifiedUser->name,
-            'created_at'             => $pageItem->created_at->format('Y-m-d H:i:s'),
-            'updated_at'             => $pageItem->updated_at->format('Y-m-d H:i:s'),
+            'page_external_id'          => $pageItem->external_id,
+            'p_page_external_id'        => Document::externalIDFromID($pageItem->pid, false)? : '0',
+            'title'                     => $pageItem->title,
+            'description'               => $pageItem->description,
+            'content'                   => $pageItem->content,
+            'type'                      => $pageItem->type,
+            'user_id'                   => $pageItem->user_id,
+            'username'                  => $pageItem->user->name,
+            'sort_level'                => $pageItem->sort_level,
+            'last_modified_user_id'     => $pageItem->lastModifiedUser->id,
+            'last_modified_username'    => $pageItem->lastModifiedUser->name,
+            'created_at'                => $pageItem->created_at->format('Y-m-d H:i:s'),
+            'updated_at'                => $pageItem->updated_at->format('Y-m-d H:i:s'),
         ];
     }
 

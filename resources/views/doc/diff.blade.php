@@ -31,9 +31,9 @@
 
 
             <div class="wz-title-changed">
-                <i class="fa fa-quote-left"> 上级目录ID</i>
-                @if($doc1pid !== $doc2pid)
-                <s class="text-danger">{{ $doc2pid }}</s> 修改为 <b class="text-success">{{ $doc1pid }}</b>
+                <i class="fa fa-quote-left"> 上级目录外部ID</i>
+                @if($doc1p_page_external_id !== $doc2p_page_external_id)
+                <s class="text-danger">{{ $doc2p_page_external_id }}</s> 修改为 <b class="text-success">{{ $doc1p_page_external_id }}</b>
                 @else
                     <i class="text-success">无变更</i>
                 @endif

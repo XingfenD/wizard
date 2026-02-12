@@ -89,8 +89,8 @@
                         {{ csrf_field() }}
                         <div class="form-document-import">
                             <div class="form-group">
-                                <label for="form-pid" class="bmd-label-floating">上级页面</label>
-                                <select class="form-control" name="page_id" id="form-pid">
+                                <label for="form-p_page_external_id" class="bmd-label-floating">上级页面</label>
+                                <select class="form-control" name="page_id" id="form-p_page_external_id">
                                     <option value="0">@lang('document.no_parent_page')</option>
                                     @include('components.doc-options', ['navbars' => navigator($project->id, $pageItem->external_id ?? '0'), 'level' => 0])
                                 </select>

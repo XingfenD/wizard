@@ -14,6 +14,8 @@
  *
  * Modifications:
  *  1. Use page external id instead of page id
+ *  2. getPageJSON will not expose id and pid now,
+ *         but return page_external_id and p_page_external_id instead
  */
 
 namespace App\Http\Controllers;
@@ -153,8 +155,8 @@ class HistoryController extends Controller
 
         return [
             'id'                     => $history->id,
-            'page_id'                => $history->page_id,
-            'pid'                    => $history->pid,
+            'page_external_id'       => $page_external_id,
+            'p_page_external_id'     => Document::externalIDFromID($history->pid, false)? : '0',
             'title'                  => $history->title,
             'description'            => $history->description,
             'content'                => $history->content,

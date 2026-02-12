@@ -2,13 +2,24 @@
 /**
  * Wizard
  *
- * @link      https://aicode.cc/
- * @copyright 管宜尧 <mylxsw@aicode.cc>
+ * Original Code Copyright
+ * @license     Apache2.0
+ * @link        https://aicode.cc/
+ * @copyright   管宜尧 <mylxsw@aicode.cc>
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. Compare document by page external id instead of page id
  */
 
 namespace App\Http\Controllers;
 
 
+use App\Repositories\Document;
 use Illuminate\Http\Request;
 use SebastianBergmann\Diff\Differ;
 use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
@@ -38,19 +49,19 @@ class CompareController extends Controller
 
         $doc1title = $request->input('doc1title');
         $doc1      = $request->input('doc1', '');
-        $doc1pid   = $request->input('doc1pid');
+        $doc1p_page_external_id = $request->input('doc1p_page_external_id');
 
         $doc2title = $request->input('doc2title');
         $doc2      = $request->input('doc2', '');
-        $doc2pid   = $request->input('doc2pid');
+        $doc2p_page_external_id = $request->input('doc2p_page_external_id');
 
         $viewData = [
             'doc1'      => $doc1,
             'doc2'      => $doc2,
             'doc1title' => $doc1title,
             'doc2title' => $doc2title,
-            'doc1pid'   => $doc1pid,
-            'doc2pid'   => $doc2pid,
+            'doc1p_page_external_id'   => $doc1p_page_external_id,
+            'doc2p_page_external_id'   => $doc2p_page_external_id,
             'noheader'  => !!$request->input('noheader', 0)
         ];
 
