@@ -578,6 +578,6 @@ class ProjectController extends Controller
         }
 
         return view('project.document-selector',
-            ['navigator' => navigator($project_id, 0, $exclude)]);
+            ['navigator' => navigator($project_id, '0', $exclude)]);
     }
 }

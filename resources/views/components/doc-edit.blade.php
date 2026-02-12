@@ -2,7 +2,6 @@
     {{ csrf_field() }}
     <input type="hidden" name="project_id" id="editor-project_id" value="{{ $project->id ?? '' }}"/>
     <input type="hidden" name="page_external_id" id="editor-page_external_id" value="{{ $pageItem->external_id ?? '' }}">
-    <input type="hidden" name="pid" id="editor-pid" value="{{ $pageItem->pid ?? '' }}">
     <input type="hidden" name="last_modified_at" value="{{ $pageItem->updated_at ?? '' }}">
     <input type="hidden" name="history_id" value="{{ $pageItem->history_id ?? '' }}">
     <input type="hidden" name="sort_level" value="{{ $pageItem->sort_level ?? 1000 }}">
@@ -58,7 +57,7 @@
         <div class="pull-left wz-document-form">
             <div class="form-group wz-document-form-select">
                 <label for="form-pid" class="bmd-label-static">上级页面</label>
-                <select class="form-control" name="pid" id="form-pid">
+                <select class="form-control" name="p_page_external_id" id="form-pid">
                     <option value="0">@lang('document.no_parent_page')</option>
                     @include('components.doc-options', ['navbars' => $navigator, 'level' => 0])
                 </select>
@@ -195,7 +194,7 @@
                             // layer.close(index);
                             // documentSaving = false;
                         }, function () {
-                            window.location.href = '{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => $type, 'pid' => $pid]) !!}';
+                            window.location.href = '{!! wzRoute('project:doc:new:show', ['id' => $project->id, 'type' => $type, 'p_page_external_id' => $p_page_external_id]) !!}';
                         });
                     }, function() {
                         setTimeout(function(){

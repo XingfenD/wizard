@@ -65,7 +65,10 @@ class DocumentController extends Controller
     {
         $this->validate(
             $request,
-            ['type' => 'in:swagger,markdown,table', 'pid' => 'integer|min:0']
+            [
+                'type'                  => 'in:swagger,markdown,table',
+                'p_page_external_id'    => 'string|min:0',
+            ]
         );
 
         /** @var Project $project */
@@ -74,13 +77,14 @@ class DocumentController extends Controller
         $this->authorize('page-add', $project);
 
         $type = $request->input('type', 'markdown');
-        $pid = $request->input('pid', 0);
+        $p_page_external_id = $request->input('p_page_external_id', 0);
+        // BUG?: p_page_external_id instead of pid
         return view("doc.{$type}", [
-            'newPage'   => true,
-            'project'   => $project,
-            'type'      => $type,
-            'pid'       => $pid,
-            'navigator' => navigator((int)$id, $pid),
+            'newPage'               => true,
+            'project'               => $project,
+            'type'                  => $type,
+            'p_page_external_id'    => $p_page_external_id,
+            'navigator'             => navigator((int)$id, $p_page_external_id),
         ]);
     }
 
@@ -97,17 +101,22 @@ class DocumentController extends Controller
     {
         /** @var Document $pageItem */
         $pageItem = Document::where('project_id', $id)->where('external_id', $page_external_id)->firstOrFail();
-        $p_page_external_id = Document::externalIdFromID($id, $pageItem->pid);
+        if ($pageItem->pid == null || $pageItem->pid == 0) {
+            $p_page_external_id = '0';
+        } else {
+            $p_page_external_id = Document::externalIdFromID($pageItem->pid);
+        }
+
         $this->authorize('page-edit', $pageItem);
 
         $type = $this->types[$pageItem->type];
 
         return view("doc.{$type}", [
-            'pageItem'  => $pageItem,
-            'project'   => $pageItem->project,
-            'newPage'   => false,
-            'type'      => $type,
-            'pid'       => $pageItem->pid,
+            'pageItem'              => $pageItem,
+            'project'               => $pageItem->project,
+            'newPage'               => false,
+            'type'                  => $type,
+            'p_page_external_id'    => $p_page_external_id,
             'navigator' => navigator((int)$id, $p_page_external_id, [$page_external_id]),
         ]);
     }
@@ -128,12 +137,12 @@ class DocumentController extends Controller
         $this->validate(
             $request,
             [
-                'project_id' => "required|integer|min:1|in:{$id}|project_exist",
-                'title'      => 'string|nullable',
-                'type'       => 'required|in:markdown,swagger,table',
-                'pid'        => 'integer|min:0',
-                'sort_level' => 'integer',
-                'sync_url'   => 'nullable|url',
+                'project_id'            => "required|integer|min:1|in:{$id}|project_exist",
+                'title'                 => 'nullable|string|max:255',
+                'type'                  => 'required|in:markdown,swagger,table',
+                'p_page_external_id'    => "string|min:1",
+                'sort_level'            => 'integer',
+                'sync_url'              => 'nullable|url',
             ],
             [
                 // 'title.required' => __('document.validation.title_required'),
@@ -144,7 +153,7 @@ class DocumentController extends Controller
 
         $this->authorize('page-add', $id);
 
-        $pid = $request->input('pid', 0);
+        $p_page_external_id = $request->input('p_page_external_id', '0');
         $projectID = $request->input('project_id');
         $title = $request->input('title', "未命名文档");
         $content = $request->input('content');
@@ -169,6 +178,11 @@ class DocumentController extends Controller
         }
 
         $typeInt = array_flip($this->types)[$type];
+        $pid = Document::idFromExternalID($p_page_external_id, false)? : 0;
+
+        if ($title === null || $title === '') {
+            $title = __('document.default_title');
+        }
 
         $pageItem = Document::create([
             'pid'               => $pid,
@@ -221,15 +235,15 @@ class DocumentController extends Controller
         $this->validate(
             $request,
             [
-                'project_id'        => "required|integer|min:1|in:{$id}|project_exist",
-                'page_external_id'  => "required|string|in:{$page_external_id}|page_exist_by_external_id:{$id}",
-                'pid'               => "required|integer|min:0|page_exist:{$id},false",
-                'title'             => 'required|between:1,255',
-                'last_modified_at'  => 'required|date',
-                'force'             => 'bool',
-                'history_id'        => 'required|integer',
-                'sort_level'        => 'integer',
-                'sync_url'          => 'nullable|url',
+                'project_id'            => "required|integer|min:1|in:{$id}|project_exist",
+                'page_external_id'      => "required|string|in:{$page_external_id}|page_exist_by_external_id:{$id}",
+                'p_page_external_id'    => "string|max:255",
+                'title'                 => 'required|between:1,255',
+                'last_modified_at'      => 'required|date',
+                'force'                 => 'bool',
+                'history_id'            => 'required|integer',
+                'sort_level'            => 'integer',
+                'sync_url'              => 'nullable|url',
             ],
             [
                 'title.required' => __('document.validation.title_required'),
@@ -238,7 +252,7 @@ class DocumentController extends Controller
             ]
         );
 
-        $pid = $request->input('pid', 0);
+        $p_page_external_id = $request->input('p_page_external_id', '0');
         $projectID = $request->input('project_id');
         $title = $request->input('title');
         $content = $request->input('content');
@@ -279,6 +293,8 @@ class DocumentController extends Controller
             ]);
         }
 
+        // 查询上级页面ID
+        $pid = Document::idFromExternalID($p_page_external_id, false);
         $pageItem->pid = $pid;
         $pageItem->project_id = $projectID;
         $pageItem->title = $title;
@@ -653,7 +669,7 @@ class DocumentController extends Controller
             $targetPage = $targetProject->pages()->where('external_id', $targetPageExternalId)->firstOrFail();
         }
 
-        $navigators = navigatorSort(navigator($project_id, 0));
+        $navigators = navigatorSort(navigator($project_id, '0'));
         $navigators = $this->filterNavigators($navigators, function (array $nav) use ($pageItem) {
             return (int)$nav['id'] === (int)$pageItem->external_id;
         });

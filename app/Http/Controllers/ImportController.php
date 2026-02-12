@@ -269,7 +269,7 @@ class ImportController extends Controller
      */
     private function createNavigatorsMap(Project $project, int $pid): array
     {
-        $navigators = navigatorSort(navigator($project->id, 0));
+        $navigators = navigatorSort(navigator($project->id, '0'));
         if ($pid > 0) {
             $navigators = $this->filterNavigators($navigators, function (array $nav) use ($pid) {
                 return (int)$nav['id'] === (int)$pid;
