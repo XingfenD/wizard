@@ -24,9 +24,10 @@
                 </thead>
                 <tbody>
 
+                <!-- TODO: select version to compare -->
                 @foreach($histories as $index => $history)
                     <tr>
-                        <th scope="row">{{ $history->id }}</th>
+                        <th scope="row">{{ $history->version }}</th>
                         <td>{{ $history->created_at }}</td>
                         <td>{{ $history->operator->name ?? '-' }}</td>
                         <td>

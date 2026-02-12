@@ -682,6 +682,8 @@ class DocumentController extends Controller
             $pageItem->save();
 
             // 历史
+            // TODO: add history record for move action
+            // TODO: 感觉把历史记录的 project_id 和 pid 修改了有点问题
             DocumentHistory::where('page_id', $pageItem->id)->update([
                 'project_id' => $targetProject->id,
                 'pid'        => $targetPage->id ?? 0,

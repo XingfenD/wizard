@@ -2,8 +2,19 @@
 /**
  * Wizard
  *
- * @link      https://aicode.cc/
- * @copyright 管宜尧 <mylxsw@aicode.cc>
+ * Original Code Copyright
+ * @license     Apache2.0
+ * @link        https://aicode.cc/
+ * @copyright   管宜尧 <mylxsw@aicode.cc>
+ *
+ * Modified Code Copyright
+ * @license     MPL2.0
+ * @link        https://github.com/XingfenD
+ * @copyright   Fendy <xingfen.fendy@outlook.com>
+ *
+ * Modifications:
+ *  1. New fillable field `version` to store document version in history record
+ *  2. write history record with version when document is updated
  */
 
 namespace App\Repositories;
@@ -54,6 +65,7 @@ class DocumentHistory extends Repository
         = [
             'page_id',
             'pid',
+            'version',
             'title',
             'description',
             'content',
@@ -76,11 +88,16 @@ class DocumentHistory extends Repository
      */
     public static function write(Document $document): DocumentHistory
     {
+        // 计算当前文档的下一个版本号
+        $lastVersion = self::where('page_id', $document->id)->max('version') ?? 0;
+        $version = $lastVersion + 1;
+
         $history = self::create(array_only(
                 $document->toArray(),
                 (new static)->fillable) + [
                 'operator_id' => $document->last_modified_uid,
                 'page_id'     => $document->id,
+                'version'     => $version,
             ]
         );
 
