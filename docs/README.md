@@ -72,7 +72,7 @@ docker-compose up -d
 
 The original project is licensed under Apache 2.0. Copyright 管宜尧 \<[mylxsw@aicode.cc](mylxsw@aicode.cc)\>
 
-Modified parts are licensed under MPL 2.0. Copyright Fendy \<[mylxsw@aicode.cc](mylxsw@aicode.cc)\>
+Modified parts are licensed under MPL 2.0. Copyright Fendy \<[xingfen.fendy@outlook.com](xingfen.fendy@outlook.com)\>
 
 ## Contributing
 
